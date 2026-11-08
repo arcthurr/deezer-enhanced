@@ -35,6 +35,8 @@ npm start
 ## Use it as a normal desktop app
 
 ```
+git clone https://github.com/arcthurr/deezer-enhanced/
+npm ci
 npm run install:local
 ```
 
