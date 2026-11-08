@@ -1,0 +1,86 @@
+/*
+ * Bridge to Deezer's own design system ("Tempo", Chakra UI, cssVarPrefix "tempo").
+ * Deezer paints almost everything with semantic tokens exposed as CSS variables
+ * (--tempo-colors-<category>-<role>-<level>-<state>), found in the web player bundle.
+ * Re-pointing them at our tokens re-themes the whole app without touching a
+ * single generated class. Chakra redeclares them on :root[data-theme] and on any
+ * element with [data-theme], hence the second selector; !important on a custom
+ * property wins over any specificity.
+ *
+ * If Deezer renames tokens, nothing breaks: the variables simply stop matching.
+ */
+html[data-bd="on"],
+html[data-bd="on"] [data-theme] {
+  /* Fonts */
+  --tempo-fonts-body: var(--bd-font-ui) !important;
+  --tempo-fonts-heading: var(--bd-font-display) !important;
+  --tempo-fonts-headline: var(--bd-font-display) !important;
+
+  /* Backgrounds: primary = page ground, secondary = chrome (rail, player), tertiary = controls */
+  --tempo-colors-background-neutral-primary-default: var(--bd-bg) !important;
+  --tempo-colors-background-neutral-primary-hovered: var(--bd-surface-1) !important;
+  --tempo-colors-background-neutral-primary-pressed: var(--bd-surface-2) !important;
+  --tempo-colors-background-neutral-primary-selected: var(--bd-surface-2) !important;
+  --tempo-colors-background-neutral-primary-disabled: var(--bd-bg) !important;
+  --tempo-colors-background-neutral-secondary-default: var(--bd-surface-1) !important;
+  --tempo-colors-background-neutral-secondary-hovered: var(--bd-surface-2) !important;
+  --tempo-colors-background-neutral-secondary-pressed: var(--bd-surface-3) !important;
+  --tempo-colors-background-neutral-secondary-selected: var(--bd-surface-3) !important;
+  --tempo-colors-background-neutral-secondary-disabled: var(--bd-surface-1) !important;
+  --tempo-colors-background-neutral-tertiary-default: var(--bd-surface-2) !important;
+  --tempo-colors-background-neutral-tertiary-hovered: var(--bd-surface-3) !important;
+  --tempo-colors-background-neutral-tertiary-pressed: var(--bd-surface-4) !important;
+  --tempo-colors-background-neutral-tertiary-selected: var(--bd-surface-3) !important;
+  --tempo-colors-background-neutral-tertiary-disabled: var(--bd-surface-2) !important;
+  --tempo-colors-background-neutral-inverse-default: var(--bd-text) !important;
+  --tempo-colors-background-neutral-inverse-hovered: var(--bd-text-2) !important;
+  --tempo-colors-background-neutral-inverse-pressed: var(--bd-text-2) !important;
+
+  --tempo-colors-background-accent-primary-default: var(--bd-accent) !important;
+  --tempo-colors-background-accent-primary-hovered: var(--bd-accent-hover) !important;
+  --tempo-colors-background-accent-primary-pressed: var(--bd-accent-pressed) !important;
+  --tempo-colors-background-accent-secondary-default: var(--bd-accent-soft) !important;
+
+  /* Text */
+  --tempo-colors-text-neutral-primary-default: var(--bd-text) !important;
+  --tempo-colors-text-neutral-primary-hovered: var(--bd-text) !important;
+  --tempo-colors-text-neutral-primary-pressed: var(--bd-text-2) !important;
+  --tempo-colors-text-neutral-primary-selected: var(--bd-text) !important;
+  --tempo-colors-text-neutral-primary-disabled: var(--bd-text-disabled) !important;
+  --tempo-colors-text-neutral-secondary-default: var(--bd-text-2) !important;
+  --tempo-colors-text-neutral-secondary-hovered: var(--bd-text) !important;
+  --tempo-colors-text-neutral-secondary-pressed: var(--bd-text) !important;
+  --tempo-colors-text-neutral-secondary-selected: var(--bd-text) !important;
+  --tempo-colors-text-neutral-secondary-disabled: var(--bd-text-disabled) !important;
+  --tempo-colors-text-neutral-inverse-default: var(--bd-bg) !important;
+  --tempo-colors-text-accent-primary-default: var(--bd-accent-text) !important;
+  --tempo-colors-text-accent-primary-hovered: var(--bd-accent-text) !important;
+  --tempo-colors-text-accent-primary-pressed: var(--bd-accent) !important;
+  --tempo-colors-text-accent-onAccent-default: var(--bd-on-accent) !important;
+
+  /* Icons */
+  --tempo-colors-icon-neutral-primary-default: var(--bd-text) !important;
+  --tempo-colors-icon-neutral-primary-hovered: var(--bd-text) !important;
+  --tempo-colors-icon-neutral-primary-disabled: var(--bd-text-disabled) !important;
+  --tempo-colors-icon-neutral-secondary-default: var(--bd-text-2) !important;
+  --tempo-colors-icon-neutral-secondary-hovered: var(--bd-text) !important;
+  --tempo-colors-icon-neutral-secondary-pressed: var(--bd-text) !important;
+  --tempo-colors-icon-neutral-tertiary-default: var(--bd-text-3) !important;
+  --tempo-colors-icon-neutral-inverse-default: var(--bd-bg) !important;
+  --tempo-colors-icon-accent-primary-default: var(--bd-accent-text) !important;
+  --tempo-colors-icon-accent-primary-hovered: var(--bd-accent-text) !important;
+  --tempo-colors-icon-accent-primary-pressed: var(--bd-accent) !important;
+  --tempo-colors-icon-accent-onAccent-default: var(--bd-on-accent) !important;
+
+  /* Borders and dividers */
+  --tempo-colors-border-neutral-primary-default: var(--bd-line) !important;
+  --tempo-colors-border-neutral-primary-hovered: var(--bd-line-strong) !important;
+  --tempo-colors-border-neutral-primary-pressed: var(--bd-line-strong) !important;
+  --tempo-colors-border-neutral-primary-focused: var(--bd-accent) !important;
+  --tempo-colors-border-accent-primary-default: var(--bd-accent) !important;
+  --tempo-colors-border-accent-primary-focused: var(--bd-accent) !important;
+  --tempo-colors-divider-neutral-primary-default: var(--bd-line) !important;
+
+  /* Radii (Tempo scale: 2xs 4, xs 8, s 12, m 16, l 24) */
+  --tempo-radii-l: var(--bd-r-dock) !important;
+}

@@ -1,0 +1,8 @@
+dist/
+node_modules/
+*.zip
+.DS_Store
+test/.out/
+
+# Never commit session cookies or credentials
+*cookies*.json

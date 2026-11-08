@@ -25,6 +25,12 @@ import {
   LOGIN_ON_LOGIN,
 } from './common/channels/login';
 import { LoginType } from './common/types/login';
+import {
+  BD_GET_STATE,
+  BD_OPEN_PANEL,
+  BD_SET_FEATURE,
+} from './common/channels/better_deezer';
+import { BetterDeezerState } from './common/types/better_deezer';
 
 export const historyAPI = {
   goForward: () => ipcRenderer.send(HISTORY_GO_FORWARD),
@@ -101,6 +107,13 @@ export const loginAPI = {
   },
 };
 
+export const betterDeezerAPI = {
+  getState: (): Promise<BetterDeezerState> => ipcRenderer.invoke(BD_GET_STATE),
+  setFeature: (id: string, on: boolean) =>
+    ipcRenderer.send(BD_SET_FEATURE, id, on),
+  openPanel: () => ipcRenderer.send(BD_OPEN_PANEL),
+};
+
 contextBridge.exposeInMainWorld('renderer', {
   historyAPI,
   downloadsAPI,
@@ -109,4 +122,5 @@ contextBridge.exposeInMainWorld('renderer', {
   notificationsAPI,
   themesAPI,
   loginAPI,
+  betterDeezerAPI,
 });

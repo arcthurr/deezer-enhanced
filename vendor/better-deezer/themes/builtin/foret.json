@@ -1,0 +1,44 @@
+{
+  "schema": 1,
+  "id": "foret",
+  "name": "Forêt",
+  "author": "Better Deezer",
+  "description": "Moss greens, calm and natural.",
+  "version": "1.0.0",
+  "modes": [
+    "dark",
+    "light"
+  ],
+  "colors": {
+    "dark": {
+      "bg": "#0b0e0c",
+      "surface-1": "#121713",
+      "surface-2": "#18201a",
+      "surface-3": "#212b23",
+      "surface-4": "#2b382e",
+      "line": "#233026",
+      "line-strong": "#344437",
+      "text": "#eef4ef",
+      "text-2": "#aebdb1",
+      "text-3": "#8fa093",
+      "accent": "#3ddc84",
+      "accent-text": "#7ee8ad",
+      "on-accent": "#06210f"
+    },
+    "light": {
+      "bg": "#f2f5f1",
+      "surface-1": "#fcfbf9",
+      "surface-2": "#e6ece4",
+      "surface-3": "#d9e1d6",
+      "surface-4": "#cad4c6",
+      "line": "#d6ddd3",
+      "line-strong": "#bfcabb",
+      "text": "#101611",
+      "text-2": "#3e4c41",
+      "text-3": "#5a6a5d",
+      "accent": "#15803d",
+      "accent-text": "#116632",
+      "on-accent": "#fcfbf9"
+    }
+  }
+}

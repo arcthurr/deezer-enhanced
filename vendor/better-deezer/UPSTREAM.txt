@@ -1,0 +1,5 @@
+Vendored from https://github.com/Gabizoc/Better-Deezer.git
+Ref: default branch
+Commit: 097e8dc820bf1a33376b342203599131be11df87
+Last upstream commit: 2026-11-07 Keep French punctuation with its word in the Now playing title
+License: MIT (see LICENSE)

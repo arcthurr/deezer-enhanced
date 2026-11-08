@@ -1,0 +1,243 @@
+/*
+ * Content: covers, cards, track rows, page headers.
+ * Elements are tagged by features/content.js using data-testid / ARIA roles.
+ */
+
+/* Covers */
+html[data-bd="on"] [data-bd="page"] [data-testid="item_cover"],
+html[data-bd="on"] [data-bd="page"] [data-bd-role="cover"] {
+  border-radius: var(--bd-r-cover) !important;
+  overflow: hidden !important;
+}
+
+/* Cards: quiet surface on hover, no lift, no shadow */
+html[data-bd="on"] [data-bd-role="card"] {
+  border-radius: var(--bd-r-card) !important;
+  transition: background-color var(--bd-t-fast) var(--bd-ease) !important;
+}
+
+html[data-bd="on"] [data-bd-role="card"]:hover {
+  background-color: var(--bd-surface-2) !important;
+}
+
+/* Track rows */
+html[data-bd="on"] [data-bd-role="track-row"] {
+  border-radius: var(--bd-r-cover) !important;
+  border-bottom-color: transparent !important;
+}
+
+html[data-bd="on"] [data-bd-role="track-row"]:hover {
+  background-color: var(--bd-surface-2) !important;
+}
+
+html[data-bd="on"] [data-bd-role="track-row"][data-bd-playing="true"] {
+  background-color: var(--bd-surface-2) !important;
+}
+
+html[data-bd="on"] [data-bd-role="track-row"][data-bd-playing="true"] [data-testid="title"] {
+  color: var(--bd-accent-text) !important;
+}
+
+/* "Show all" style chips and filter pills */
+html[data-bd="on"] [data-bd-role="chip"] {
+  border-radius: var(--bd-r-pill) !important;
+  border: 0 !important;
+  background: var(--bd-surface-2) !important;
+  color: var(--bd-text) !important;
+  font-weight: 600 !important;
+}
+
+html[data-bd="on"] [data-bd-role="chip"][aria-selected="true"],
+html[data-bd="on"] [data-bd-role="chip"][aria-pressed="true"] {
+  background: var(--bd-text) !important;
+  color: var(--bd-bg) !important;
+}
+
+/* Explicit badge */
+html[data-bd="on"] [data-testid*="explicit" i] {
+  border-radius: var(--bd-r-chip) !important;
+  background: var(--bd-surface-3) !important;
+  color: var(--bd-text-2) !important;
+}
+
+/* ---------- Album / playlist / artist header (features/pages.js, ambient.js) ---------- */
+html[data-bd="on"] [data-bd="page-header"] {
+  align-items: flex-end !important;
+  gap: 32px !important;
+  padding: 32px !important;
+  border-radius: var(--bd-r-dock) !important;
+  background: var(--bd-ambient) !important;
+  transition: background-color var(--bd-t-layout) var(--bd-ease) !important;
+}
+
+html[data-bd="on"] [data-bd-role="page-cover"],
+html[data-bd="on"] [data-bd-role="page-cover"] img {
+  border-radius: var(--bd-r-card) !important;
+}
+
+html[data-bd="on"] [data-bd-role="page-cover"][data-bd-round="true"],
+html[data-bd="on"] [data-bd-role="page-cover"][data-bd-round="true"] img {
+  border-radius: 50% !important;
+}
+
+html[data-bd="on"] [data-bd-role="page-cover"] {
+  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.35) !important;
+  overflow: hidden !important;
+}
+
+html[data-bd="on"] [data-bd="page-header"] [data-bd-role="page-title"] {
+  font-size: clamp(40px, 5.2vw, 76px) !important;
+}
+
+html[data-bd="on"] [data-bd="page-header"] [data-bd-role="page-title"][data-bd-len="l"] {
+  font-size: clamp(34px, 4vw, 56px) !important;
+}
+
+html[data-bd="on"] [data-bd="page-header"] [data-bd-role="page-title"][data-bd-len="xl"] {
+  font-size: clamp(28px, 3vw, 40px) !important;
+  line-height: 1.05 !important;
+}
+
+html[data-bd="on"] [data-bd="page-header"] [data-testid="masthead-subtitle"] a {
+  color: var(--bd-text) !important;
+  font-weight: 600 !important;
+}
+
+html[data-bd="on"] [data-bd="page-header"] ul p {
+  color: var(--bd-text-2) !important;
+}
+
+/* ---------- Track list ---------- */
+html[data-bd="on"] [data-bd-role="track-grid"] [role="columnheader"] {
+  color: var(--bd-text-3) !important;
+  font: 600 11px/1.2 var(--bd-font-ui) !important;
+  letter-spacing: 0.06em !important;
+  text-transform: uppercase;
+}
+
+/* Heart and "more" appear on hover / focus, a liked heart stays */
+html[data-bd="on"] [data-bd-role="track-grid"] [role="row"] button:is(:has(> svg[data-testid="HeartOutlinedIcon"]), :has(> svg[data-testid="MoreHorizontalIcon"])) {
+  opacity: 0;
+  transition: opacity var(--bd-t-fast) var(--bd-ease) !important;
+}
+
+html[data-bd="on"] [data-bd-role="track-grid"] [role="row"]:is(:hover, :focus-within) button:is(:has(> svg[data-testid="HeartOutlinedIcon"]), :has(> svg[data-testid="MoreHorizontalIcon"])) {
+  opacity: 1;
+}
+
+/* Selection checkboxes: only on hover, or when something is selected */
+html[data-bd="on"] [data-bd-role="track-grid"] [data-testid="select_button"]:not(:has(input:checked)) {
+  opacity: 0;
+  transition: opacity var(--bd-t-fast) var(--bd-ease) !important;
+}
+
+html[data-bd="on"] [data-bd-role="track-grid"]:has(input:checked) [data-testid="select_button"],
+html[data-bd="on"] [data-bd-role="track-grid"] :is([role="row"], [role="rowgroup"]:first-child):is(:hover, :focus-within) [data-testid="select_button"] {
+  opacity: 1;
+}
+
+html[data-bd="on"] [data-bd-role="track-grid"] [role="row"] svg[data-testid="HeartFilledIcon"] {
+  color: var(--bd-accent) !important;
+}
+
+html[data-bd="on"] [data-bd-role="track-grid"] [data-testid="duration"] {
+  color: var(--bd-text-3) !important;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Popularity: a thin bar (rank Deezer) instead of five ticks */
+html[data-bd="on"] [data-testid="popularity"][data-bd-pop] {
+  width: 32px !important;
+  height: 4px !important;
+  border-radius: var(--bd-r-pill) !important;
+  background: linear-gradient(90deg, var(--bd-text-2) 0 var(--bd-pop, 0%), var(--bd-line-strong) var(--bd-pop, 0%) 100%) !important;
+}
+
+html[data-bd="on"] [data-testid="popularity"][data-bd-pop] > * {
+  display: none !important;
+}
+
+/* "Hide explicit tracks" */
+html[data-bd="on"][data-bd-hide-explicit="true"] [data-bd-explicit="true"] {
+  display: none !important;
+}
+
+html[data-bd="on"] .bd-explicit-toggle {
+  margin-left: 16px;
+  align-self: center;
+}
+
+/* Shared chip (also used in notifications) */
+html[data-bd="on"] .bd-chip {
+  height: 30px;
+  padding: 0 14px;
+  border: 0;
+  border-radius: var(--bd-r-pill) !important;
+  background: var(--bd-surface-2);
+  color: var(--bd-text-2);
+  font: 600 13px/1 var(--bd-font-ui);
+  cursor: pointer;
+}
+
+html[data-bd="on"] .bd-chip:hover {
+  color: var(--bd-text);
+  background: var(--bd-surface-3) !important;
+}
+
+html[data-bd="on"] .bd-chip[aria-pressed="true"] {
+  background: var(--bd-text) !important;
+  color: var(--bd-bg);
+}
+
+/* ---------- Home ---------- */
+.bd-greeting {
+  padding: 8px 0 4px;
+}
+
+.bd-greeting-date {
+  margin: 0 0 4px;
+  color: var(--bd-text-3);
+  font: 600 13px/1.2 var(--bd-font-ui);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.bd-greeting-title {
+  margin: 0;
+  color: var(--bd-text);
+  font: 800 clamp(32px, 3.4vw, 48px) / 1 var(--bd-font-display);
+  letter-spacing: -0.035em;
+}
+
+/* Home order (Settings > Recommendations): sections keep their DOM place, CSS orders them. */
+html[data-bd="on"] [data-bd="home-list"] {
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+html[data-bd="on"] [data-bd="home-list"] > .bd-greeting {
+  order: -100000;
+  margin-bottom: 24px;
+}
+
+/* Flex items keep their children's margins inside: drop the top one so the
+   space between sections stays 24px, as when the margins collapsed. */
+html[data-bd="on"] [data-bd="home-list"] > [data-testid="section-renderer"] > :first-child {
+  margin-top: 0 !important;
+}
+
+html[data-bd="on"] [data-bd-hidden="true"] {
+  display: none !important;
+}
+
+/* Section headings and "see all" links */
+html[data-bd="on"] [data-bd-role="section-title"] {
+  font-size: 28px !important;
+  font-weight: 700 !important;
+  line-height: 1.1 !important;
+}
+
+/* "Don't recommend" list (features/reco.js) */
+html[data-bd="on"] [data-bd-blocked="true"] {
+  display: none !important;
+}

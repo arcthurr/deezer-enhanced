@@ -2,3 +2,5 @@ vite.config.ts
 vite.renderer.config.ts
 forge.config.ts
 forge.env.d.ts
+vendor
+out

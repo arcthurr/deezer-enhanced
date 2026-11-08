@@ -3,6 +3,7 @@ import { DEFAULT_SETTINGS, Settings } from '../../../common/types/settings';
 import { currentSettingsAtom } from '../../states/atoms';
 import Switch from './Switch';
 import NumberInput from './NumberInput';
+import BetterDeezerSettings from './BetterDeezerSettings';
 
 const setValue = <K extends keyof Settings>(key: K, value: Settings[K]) =>
   window.renderer.settingsAPI.setSettingProperty(key, value);
@@ -84,15 +85,7 @@ function SettingsForm(): React.JSX.Element {
           setCurrentSettings({ ...currentSettings, discordRPC: newValue });
         }}
       />
-      <Switch
-        id="adblock"
-        state={currentSettings.adblock}
-        text="Adblock (disables podcasts)"
-        onChange={(newValue) => {
-          setValue('adblock', newValue);
-          setCurrentSettings({ ...currentSettings, adblock: newValue });
-        }}
-      />
+      <BetterDeezerSettings />
       <button
         type="button"
         className="cursor-pointer font-bold text-primary"

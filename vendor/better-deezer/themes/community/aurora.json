@@ -1,0 +1,29 @@
+{
+  "schema": 1,
+  "id": "aurora",
+  "name": "Aurora",
+  "author": "Better Deezer contributors",
+  "description": "Night sky with a teal glow. Dark only.",
+  "version": "1.0.0",
+  "modes": [
+    "dark"
+  ],
+  "colors": {
+    "dark": {
+      "bg": "#071012",
+      "surface-1": "#0c181b",
+      "surface-2": "#112125",
+      "surface-3": "#182c31",
+      "surface-4": "#20393f",
+      "line": "#183036",
+      "line-strong": "#284650",
+      "text": "#e8f6f7",
+      "text-2": "#a2c1c4",
+      "text-3": "#84a5a9",
+      "accent": "#2dd4bf",
+      "accent-text": "#7eeadd",
+      "on-accent": "#032622"
+    }
+  },
+  "css": "html[data-bd-skin=\"aurora\"] [data-bd=\"dock\"] {\n  border-color: color-mix(in srgb, var(--bd-accent) 30%, var(--bd-line)) !important;\n}\n"
+}

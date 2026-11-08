@@ -6,6 +6,7 @@ import {
   settingsAPI,
   themesAPI,
   loginAPI,
+  betterDeezerAPI,
 } from '../preload';
 
 declare global {
@@ -18,6 +19,7 @@ declare global {
       notificationsAPI: typeof notificationsAPI;
       themesAPI: typeof themesAPI;
       loginAPI: typeof loginAPI;
+      betterDeezerAPI: typeof betterDeezerAPI;
     };
   }
 

@@ -1,0 +1,44 @@
+{
+  "schema": 1,
+  "id": "braise",
+  "name": "Braise",
+  "author": "Better Deezer",
+  "description": "Embers: warm browns and a glowing orange.",
+  "version": "1.0.0",
+  "modes": [
+    "dark",
+    "light"
+  ],
+  "colors": {
+    "dark": {
+      "bg": "#0e0b09",
+      "surface-1": "#16110e",
+      "surface-2": "#1e1713",
+      "surface-3": "#29201a",
+      "surface-4": "#352a22",
+      "line": "#2c231d",
+      "line-strong": "#3f332a",
+      "text": "#f8f1ec",
+      "text-2": "#c4b4a8",
+      "text-3": "#a8978a",
+      "accent": "#ff7a2f",
+      "accent-text": "#ffab78",
+      "on-accent": "#1f0d02"
+    },
+    "light": {
+      "bg": "#f8f3ee",
+      "surface-1": "#fcfbf9",
+      "surface-2": "#f0e8e0",
+      "surface-3": "#e6dbd0",
+      "surface-4": "#d9cbbd",
+      "line": "#e3d8cd",
+      "line-strong": "#d1c2b3",
+      "text": "#1b130e",
+      "text-2": "#54443a",
+      "text-3": "#74645a",
+      "accent": "#c2410c",
+      "accent-text": "#9a3412",
+      "on-accent": "#fcfbf9"
+    }
+  }
+}

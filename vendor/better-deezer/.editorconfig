@@ -1,0 +1,21 @@
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+indent_style = space
+indent_size = 2
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+[*.md]
+trim_trailing_whitespace = false
+
+# Windows PowerShell 5.1 reads UTF-8 without a BOM as ANSI: keep the BOM.
+# install.ps1 is pure ASCII on purpose (piped through "irm | iex").
+[desktop/*.ps1]
+charset = utf-8-bom
+indent_size = 2
+
+[desktop/install.ps1]
+charset = unset

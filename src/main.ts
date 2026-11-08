@@ -21,38 +21,15 @@ import {
 } from './main/login';
 import { LOGIN_ON_LOGIN, LOGIN_ON_LOGOUT } from './common/channels/login';
 import { DEEZER_LOGIN_PROTOCOL, DEEZER_LOGIN_URL } from './main/utils/login';
+import {
+  initializeBetterDeezer,
+  injectBetterDeezer,
+} from './main/better_deezer';
 
 const USER_AGENT =
   'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36';
 
 const gotTheLock = app.requestSingleInstanceLock();
-
-const HOST_WHITELIST: ReadonlyArray<string> = [
-  'deezer.com',
-  'dzcdn.net',
-  'edgecastcdn.net',
-
-  // Login recaptcha
-  'google.com',
-  'gstatic.com',
-
-  // Social logins
-  'appleid.cdn-apple.com',
-  'connect.facebook.net',
-  'appleid.apple.com',
-
-  // Social pages
-  'apple.com',
-  'facebook.com',
-  'accounts.youtube.com',
-
-  // Socials content
-  'static.xx.fbcdn.net',
-  'lh3.googleusercontent.com',
-  'is1-ssl.mzstatic.com',
-
-  'localhost',
-];
 
 if (process.defaultApp) {
   if (process.argv.length >= 2) {
@@ -93,25 +70,6 @@ if (!gotTheLock) {
         callback(details);
       }
     });
-
-    session.defaultSession.webRequest.onBeforeRequest(
-      { urls: ['*://*/*'] },
-      (details, callback) => {
-        const url = new URL(details.url);
-
-        if (!getSettings().adblock) {
-          callback({ cancel: false });
-          return;
-        }
-
-        if (HOST_WHITELIST.some((host) => url.hostname.endsWith(host))) {
-          callback({ cancel: false });
-          return;
-        }
-
-        callback({ cancel: true });
-      }
-    );
 
     const mainWindow = new BaseWindow({
       width: DEFAULT_WIDTH,
@@ -165,6 +123,7 @@ if (!gotTheLock) {
     initializeDownloads(mainView, view);
     initializeThemeSwitcher(mainView, view);
     initializeZoom(mainWindow, mainView, view);
+    initializeBetterDeezer(mainWindow, view);
     createHistoryHandles(view);
     createKeyboardHandles(view);
     createLoginHandles(view);
@@ -191,6 +150,8 @@ if (!gotTheLock) {
           view.webContents.executeJavaScript(data.toString());
         }
       });
+
+      injectBetterDeezer(view);
 
       if (await isLoggedIn(view)) {
         mainView.webContents.send(LOGIN_ON_LOGIN);

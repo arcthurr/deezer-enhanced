@@ -1,0 +1,44 @@
+{
+  "schema": 1,
+  "id": "rose",
+  "name": "Rosé",
+  "author": "Better Deezer",
+  "description": "Soft plum and a candy pink accent.",
+  "version": "1.0.0",
+  "modes": [
+    "dark",
+    "light"
+  ],
+  "colors": {
+    "dark": {
+      "bg": "#0f0a0d",
+      "surface-1": "#171015",
+      "surface-2": "#20171d",
+      "surface-3": "#2b1f27",
+      "surface-4": "#382a33",
+      "line": "#2e222a",
+      "line-strong": "#42333d",
+      "text": "#faf0f5",
+      "text-2": "#c9b2bf",
+      "text-3": "#ad95a3",
+      "accent": "#ff5fa2",
+      "accent-text": "#ff9cc6",
+      "on-accent": "#2a0614"
+    },
+    "light": {
+      "bg": "#fbf3f6",
+      "surface-1": "#fcfbf9",
+      "surface-2": "#f4e7ed",
+      "surface-3": "#ead8e1",
+      "surface-4": "#ddc6d1",
+      "line": "#ecdbe3",
+      "line-strong": "#dcc4cf",
+      "text": "#1d1117",
+      "text-2": "#57414d",
+      "text-3": "#75606b",
+      "accent": "#c0266d",
+      "accent-text": "#9d1d58",
+      "on-accent": "#fcfbf9"
+    }
+  }
+}

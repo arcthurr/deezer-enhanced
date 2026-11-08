@@ -1,0 +1,51 @@
+{
+  "schema": 1,
+  "id": "encre",
+  "name": "Encre",
+  "author": "Better Deezer",
+  "description": "Black and white, maximum contrast.",
+  "version": "1.0.0",
+  "modes": [
+    "dark",
+    "light"
+  ],
+  "colors": {
+    "dark": {
+      "bg": "#000000",
+      "surface-1": "#0d0d0d",
+      "surface-2": "#171717",
+      "surface-3": "#222222",
+      "surface-4": "#2e2e2e",
+      "line": "#2a2a2a",
+      "line-strong": "#404040",
+      "text": "#ffffff",
+      "text-2": "#c7c7c7",
+      "text-3": "#a3a3a3",
+      "accent": "#ffffff",
+      "accent-text": "#ffffff",
+      "on-accent": "#000000"
+    },
+    "light": {
+      "bg": "#fafaf9",
+      "surface-1": "#fafaf9",
+      "surface-2": "#f2f2f2",
+      "surface-3": "#e6e6e6",
+      "surface-4": "#d6d6d6",
+      "line": "#e0e0e0",
+      "line-strong": "#c2c2c2",
+      "text": "#141414",
+      "text-2": "#3d3d3d",
+      "text-3": "#5c5c5c",
+      "accent": "#141414",
+      "accent-text": "#141414",
+      "on-accent": "#fafaf9"
+    }
+  },
+  "radius": {
+    "chip": 4,
+    "cover": 6,
+    "card": 8,
+    "menu": 10,
+    "dock": 14
+  }
+}

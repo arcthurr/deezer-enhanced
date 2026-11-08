@@ -1,0 +1,249 @@
+<!doctype html>
+<!--
+  Test fixture for Better Deezer. Reproduces the anchors found in Deezer's web
+  player bundle (see HANDOFF.md §5): ids, data-testid, Tempo CSS variables,
+  sidebar geometry, the lazy volume popover and the account popover.
+  Served at https://www.deezer.com/fr/ by test/smoke.mjs (Playwright route).
+  The class names below mimic Deezer's generated ones on purpose: Better Deezer
+  must never rely on them.
+-->
+<html lang="fr" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<title>Deezer (fixture)</title>
+<style>
+  /* Deezer-like Tempo tokens (dark mode values are approximations) */
+  :root, [data-theme] {
+    --tempo-colors-background-neutral-primary-default: #ffffff;
+    --tempo-colors-background-neutral-secondary-default: #f5f2f8;
+    --tempo-colors-text-neutral-primary-default: #000;
+  }
+  :root[data-theme=dark], [data-theme][data-theme=dark] {
+    --tempo-colors-background-neutral-primary-default: #121216;
+    --tempo-colors-background-neutral-secondary-default: #191922;
+    --tempo-colors-background-neutral-tertiary-default: #23232d;
+    --tempo-colors-text-neutral-primary-default: #fff;
+    --tempo-colors-text-neutral-secondary-default: #a9a6aa;
+    --tempo-colors-icon-neutral-secondary-default: #a9a6aa;
+    --tempo-colors-icon-accent-primary-default: #a238ff;
+    --tempo-colors-border-neutral-primary-default: #3a3a44;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: Inter, Arial, sans-serif; background: var(--tempo-colors-background-neutral-primary-default); color: var(--tempo-colors-text-neutral-primary-default); }
+  button { color: inherit; background: none; border: 0; cursor: pointer; font: inherit; }
+  .css-side { position: fixed; top: 0; bottom: 0; left: 0; width: var(--layout-sidebar-width); padding-bottom: 80px; display: flex; flex-direction: column; gap: 16px; background: var(--tempo-colors-background-neutral-secondary-default); z-index: 1; }
+  .css-side a { display: flex; align-items: center; gap: 12px; padding: 8px 16px; color: var(--tempo-colors-text-neutral-secondary-default); text-decoration: none; }
+  .css-side .css-pins { flex: 1; overflow: auto; display: flex; flex-direction: column; gap: 4px; padding: 0 12px; }
+  .css-side nav, .css-side .css-liblist { display: flex; flex-direction: column; }
+  .css-side h2 { margin: 0; font-size: 14px; font-weight: 500; }
+  .css-ico { width: 24px; height: 24px; border-radius: 6px; background: currentColor; flex: none; }
+  .css-top { position: fixed; top: 0; right: 0; left: var(--layout-sidebar-width); height: 80px; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 0 16px; z-index: 2; }
+  .css-top .css-actions { display: flex; gap: 12px; align-items: center; }
+  .css-grp { display: flex; align-items: center; flex: 1; max-width: 560px; border: 1px solid var(--tempo-colors-border-neutral-primary-default); border-radius: 8px; }
+  .css-grp input { flex: 1; height: 40px; background: none; border: 0; color: inherit; padding: 0 12px; }
+  #page_content { margin-left: var(--layout-sidebar-width); padding: 104px 24px 24px; }
+  .css-row { display: flex; gap: 16px; padding: 8px; border-bottom: 1px solid #333; }
+  .css-cards { display: flex; gap: 16px; }
+  .css-cover { width: 140px; height: 140px; background: #5a3a8a; }
+  .css-bar { position: fixed; left: 0; right: 0; bottom: 0; height: 80px; display: flex; align-items: center; justify-content: space-between; padding: 0 24px; background: var(--tempo-colors-background-neutral-secondary-default); border-top: 1px solid var(--tempo-colors-border-neutral-primary-default); z-index: 300; min-width: 768px; }
+  .css-bar > div { display: flex; align-items: center; gap: 8px; }
+  .css-mid { flex-direction: column; flex: 1; max-width: 600px; }
+  .css-ctl { display: flex; gap: 8px; align-items: center; }
+  .css-prog { display: flex; align-items: center; gap: 8px; width: 100%; }
+  .slider-track { position: relative; flex: 1; height: 4px; }
+  .slider-track-default { position: absolute; inset: 0; background: #555; }
+  .slider-track-active { position: absolute; left: 0; top: 0; bottom: 0; width: 35%; background: #fff; }
+  .slider-track input { position: absolute; inset: -6px 0; width: 100%; opacity: 0; margin: 0; }
+  .css-ib { width: 32px; height: 32px; display: inline-flex; align-items: center; justify-content: center; border-radius: 50%; }
+  .css-ib svg { width: 20px; height: 20px; }
+  .css-pop { position: fixed; z-index: 1500; padding: 12px; background: var(--tempo-colors-background-neutral-secondary-default); border-radius: 8px; }
+</style>
+</head>
+<body>
+<div class="naboo" style="--layout-sidebar-width: 80px; --layout-player-height: 80px">
+  <div class="css-side">
+    <a href="/fr/" aria-label="Deezer logo"><span class="css-ico"></span></a>
+    <nav>
+      <a href="/fr/" aria-current="page"><svg data-testid="HouseOutlinedIcon" class="css-ico" viewBox="0 0 24 24"></svg><h2 class="css-lbl">Accueil</h2></a>
+      <a href="/fr/channels/explore/explore-tab"><svg data-testid="CompassOutlinedIcon" class="css-ico" viewBox="0 0 24 24"></svg><h2 class="css-lbl">Explorer</h2></a>
+    </nav>
+    <div class="css-lib">
+      <div class="css-libhead"><p>Bibliothèque</p></div>
+      <div class="css-liblist">
+        <a href="/fr/library/loved"><svg data-testid="HeartOutlinedIcon" class="css-ico" viewBox="0 0 24 24"></svg><h2 class="css-lbl">Coups de cœur</h2></a>
+        <a href="/fr/library/playlists"><svg data-testid="PlaylistOutlinedIcon" class="css-ico" viewBox="0 0 24 24"></svg><h2 class="css-lbl">Playlists</h2></a>
+        <a href="/fr/library/albums"><svg data-testid="AlbumOutlinedIcon" class="css-ico" viewBox="0 0 24 24"></svg><h2 class="css-lbl">Albums</h2></a>
+        <a href="/fr/library/artists"><svg data-testid="UserOutlinedIcon" class="css-ico" viewBox="0 0 24 24"></svg><h2 class="css-lbl">Artistes</h2></a>
+        <a href="/fr/library/podcasts"><svg data-testid="MicrophoneOutlinedIcon" class="css-ico" viewBox="0 0 24 24"></svg><h2 class="css-lbl">Podcasts</h2></a>
+      </div>
+    </div>
+    <div class="css-pins">
+      <a href="/fr/library/loved" id="pinned-loved"><div class="css-ico"><svg data-testid="HeartFilledIcon" viewBox="0 0 24 24"></svg></div></a>
+      <a href="/fr/playlist/1"><span class="css-ico"></span></a>
+      <a href="/fr/playlist/2"><span class="css-ico"></span></a>
+    </div>
+    <button data-testid="sidebar-profile"><span class="css-ico"></span></button>
+  </div>
+
+  <div id="page_topbar" class="page-topbar css-top">
+    <div class="css-searchwrap" style="position: relative; width: 375px">
+      <div data-testid="search_container" aria-controls="popper-search-1">
+        <div class="css-grp" role="group" data-group="true">
+          <input data-testid="search_field" placeholder="Rechercher">
+        </div>
+      </div>
+    </div>
+    <div class="css-actions">
+    <button aria-controls="popover-content-notif" aria-haspopup="dialog"><svg data-testid="BellOutlinedIcon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/></svg><span aria-label="topbar-notification-counter" style="display: inline-block; min-width: 16px; border-radius: 8px; font-size: 10px">3</span></button>
+    <button data-testid="topbar-profile" class="topbar-action" aria-label="profile">P</button>
+    </div>
+  </div>
+
+  <main id="page_content" class="page-content">
+    <h1>Bonjour</h1>
+    <h2>Reprendre l'écoute</h2>
+    <div class="css-cards">
+      <div role="group"><div data-testid="item_cover" class="css-cover"></div><p>Discovery</p></div>
+      <div role="group"><div data-testid="item_cover" class="css-cover"></div><p>Homework</p></div>
+    </div>
+    <h2>Titres</h2>
+    <div role="grid">
+      <div role="row" class="css-row"><div role="gridcell"><span data-testid="title">One More Time</span></div></div>
+      <div role="row" class="css-row"><div role="gridcell"><span data-testid="title">Aerodynamic</span></div></div>
+    </div>
+    <div style="height: 800px"></div>
+    <div data-testid="conversionBanner" class="css-promo">Passez à Premium</div>
+    <div class="css-sections">
+      <div data-testid="section-renderer"><h2 data-testid="section_title">Vos mix</h2></div>
+      <div data-testid="section-renderer"><h2 data-testid="section_title">Nouveautés pour vous</h2></div>
+      <div data-testid="section-renderer"><h2 data-testid="section_title">Chill du soir</h2></div>
+    </div>
+  </main>
+
+  <div id="page_player" class="page-player" data-testid="miniplayer_container">
+    <div class="css-bar">
+      <div>
+        <div data-testid="item_cover" style="width: 48px; height: 48px"><img alt="" width="48" height="48" src="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 4 4%22%3E%3Crect width=%224%22 height=%224%22 fill=%22%235a3a8a%22/%3E%3C/svg%3E"></div>
+        <div><p data-testid="item_title" style="margin: 0">One More Time</p><p data-testid="item_subtitle" style="margin: 0">Daft Punk</p></div>
+        <button class="css-ib" data-testid="add_to_favorite_button_off" aria-label="Ajouter aux Coups de cœur"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 20s-7-4.5-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.5-7 10-7 10z"/></svg></button>
+      </div>
+      <div class="css-mid">
+        <div class="css-ctl">
+          <button class="css-ib" data-testid="shuffle_play_button_off" aria-label="Aléatoire"><svg viewBox="0 0 24 24"><rect x="5" y="5" width="14" height="14"/></svg></button>
+          <button class="css-ib" data-testid="previous_track_button" aria-label="Précédent"><svg viewBox="0 0 24 24"><rect x="5" y="5" width="14" height="14"/></svg></button>
+          <button class="css-ib" data-testid="play_button_play" aria-label="Lecture"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></button>
+          <button class="css-ib" data-testid="next_track_button" aria-label="Suivant"><svg viewBox="0 0 24 24"><rect x="5" y="5" width="14" height="14"/></svg></button>
+          <button class="css-ib" data-testid="repeat_button_off" aria-label="Répéter"><svg viewBox="0 0 24 24"><rect x="5" y="5" width="14" height="14"/></svg></button>
+        </div>
+        <div class="css-prog">
+          <div><span data-testid="elapsed_time">1:12</span></div>
+          <div class="slider-track"><div class="slider-track-default"></div><div class="slider-track-active"></div><div><input class="slider-track-input" type="range" min="0" max="320" value="72" data-testid="progress_bar"></div></div>
+          <div><span data-testid="remaining_time">-4:08</span></div>
+        </div>
+      </div>
+      <div>
+        <button class="css-ib" data-testid="lyrics_button" aria-label="Paroles"><svg viewBox="0 0 24 24"><rect x="5" y="5" width="14" height="14"/></svg></button>
+        <button class="css-ib" data-testid="queue_list_button" aria-label="open queuelist"><svg viewBox="0 0 24 24"><rect x="5" y="5" width="14" height="14"/></svg></button>
+        <button class="css-ib" data-testid="volume_button_default" aria-label="volume button"><svg viewBox="0 0 24 24"><path d="M4 9h4l5-4v14l-5-4H4z"/></svg></button>
+        <button class="css-ib" data-testid="audio_settings_button" aria-label="Réglages audio"><svg viewBox="0 0 24 24"><rect x="5" y="5" width="14" height="14"/></svg></button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ul id="chakra-toast-manager-bottom" style="position: fixed; bottom: 100px; left: 0; right: 0; list-style: none; display: flex; justify-content: center"></ul>
+
+<script>
+  // Fake Deezer state, readable by the smoke test.
+  window.__fake = { volume: 0.5, muted: false, mutes: 0 };
+
+  // Volume: Chakra Popover trigger="hover", isLazy: content mounts on mouseenter.
+  const vbtn = document.querySelector('[data-testid^="volume_button"]');
+  let vpop = null, vclose = 0;
+  vbtn.addEventListener("mouseover", () => {
+    clearTimeout(vclose);
+    if (vpop) return;
+    vpop = document.createElement("div");
+    vpop.className = "css-pop chakra-popover__popper";
+    const r = vbtn.getBoundingClientRect();
+    vpop.style.left = r.left - 40 + "px";
+    vpop.style.bottom = innerHeight - r.top + 8 + "px";
+    vpop.innerHTML = '<section role="dialog" data-testid="volume_menu"><div class="slider-track"><input class="slider-track-input" type="range" min="0" max="100" step="1" data-testid="volume_menu_bar"></div></section>';
+    const input = vpop.querySelector("input");
+    input.value = String(Math.round(__fake.volume * 100));
+    input.addEventListener("input", () => { __fake.volume = input.valueAsNumber / 100; __fake.muted = false; });
+    document.body.appendChild(vpop);
+  });
+  vbtn.addEventListener("mouseout", () => {
+    vclose = setTimeout(() => { vpop?.remove(); vpop = null; }, 300);
+  });
+  vbtn.addEventListener("click", () => {
+    __fake.muted = !__fake.muted;
+    __fake.mutes++;
+    vbtn.setAttribute("data-testid", __fake.muted ? "volume_button_mute" : "volume_button_default");
+  });
+
+  // Like button toggles its testid like Deezer does.
+  const like = document.querySelector('[data-testid^="add_to_favorite_button"]');
+  like.addEventListener("click", () => {
+    const on = like.dataset.testid.endsWith("_off");
+    like.dataset.testid = "add_to_favorite_button_" + (on ? "on" : "off");
+  });
+
+  // Account popover (Tempo Popover, popperId "topbar-profile").
+  document.querySelector('[data-testid="topbar-profile"]').addEventListener("click", () => {
+    if (document.querySelector('[data-testid="account-popover-content"]')) return;
+    const pop = document.createElement("div");
+    pop.className = "chakra-popover__popper";
+    pop.style.cssText = "position: fixed; top: 72px; right: 24px; z-index: 1500";
+    pop.innerHTML = '<section role="dialog" class="css-pop" data-testid="account-popover-content" style="position: static; width: 280px"><div class="account-heading"><span class="account-name">Gabriel</span></div><ul class="account-menu" role="navigation"><li><button>Membres</button></li><li><button>Paramètres du compte</button></li><li><button data-testid="log-out-btn">Déconnexion</button></li></ul></section>';
+    document.body.appendChild(pop);
+  });
+
+  // Helpers used by the smoke test.
+  window.__openModal = () => {
+    const portal = document.createElement("div");
+    portal.className = "chakra-portal";
+    portal.innerHTML = '<div class="chakra-modal__overlay" style="position: fixed; inset: 0; background: rgba(0,0,0,.6); z-index: 1400"></div><div class="chakra-modal__content-container" style="position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; z-index: 1400"><section role="dialog" aria-modal="true" class="css-pop" style="position: static; width: 480px"><header data-testid="modal_header">Créer une playlist</header><div data-testid="modal_body"><input placeholder="Nom"></div><button data-testid="modal_close_button" aria-label="close">x</button><button data-testid="btn-modal-confirm">Créer</button></section></div>';
+    document.body.appendChild(portal);
+  };
+  window.__toast = () => {
+    const li = document.createElement("li");
+    li.innerHTML = '<div role="status" class="chakra-toast__inner"><div class="css-pop" style="position: static">Ajouté aux Coups de cœur</div></div>';
+    document.getElementById("chakra-toast-manager-bottom").appendChild(li);
+  };
+  window.__openNotifications = () => {
+    const pop = document.createElement("div");
+    pop.className = "chakra-popover__popper";
+    pop.style.cssText = "position: fixed; top: 72px; right: 72px; z-index: 1500";
+    pop.innerHTML = '<section role="dialog" data-testid="popover-content" id="popover-content-notif" class="css-pop" style="position: static; width: 360px"><div data-popper-arrow><div data-popper-arrow-inner></div></div><div><h2>Notifications</h2><li><div role="group"><figure style="position: relative; margin: 0"><img alt="" width="48" height="48"><div style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center"><button type="button" class="action-item-tempo-btn" aria-label="Play" style="width: 48px; height: 48px; border-radius: 50%; background: #fff; color: #000"><svg viewBox="0 0 24 24" width="24" height="24"><path d="M8 5v14l11-7z"/></svg></button></div></figure><div role="cell"><h2><a href="/fr/album/1">Toupou</a></h2><p>Moha MMZ</p></div></div><p>IL Y A 11 HEURES - NOUVEAU SINGLE</p></li></div></section>';
+    document.body.appendChild(pop);
+  };
+  // Deezer's player object (the real one has many more methods).
+  window.dzPlayer = { getCurrentSong: () => ({ SNG_ID: "3135556", SNG_TITLE: "One More Time", DURATION: "320" }) };
+  // Deezer's Slider (React, controlled): the value only sticks during a drag
+  // (mousedown -> input -> mouseup); otherwise the next render restores it.
+  (() => {
+    const seek = document.querySelector('[data-testid="progress_bar"]');
+    let dragging = false;
+    let committed = seek.value;
+    seek.addEventListener("mousedown", () => (dragging = true));
+    // React re-renders synchronously after a discrete event:
+    seek.addEventListener("input", () => { if (!dragging) seek.value = committed; });
+    seek.addEventListener("mouseup", () => { committed = seek.value; dragging = false; });
+  })();
+  // Recent searches popover, as Deezer renders it: a fixed 450px content box.
+  window.__openRecentSearches = () => {
+    const pop = document.createElement("div");
+    pop.className = "chakra-popover__popper";
+    pop.style.cssText = "position: fixed; top: 76px; left: 400px; z-index: 1500";
+    const row = (title, sub) => '<div style="padding: 8px 16px"><div style="display: flex; align-items: center; gap: 12px"><div style="width: 48px; height: 48px; border-radius: 50%; background: #5a3a8a; flex: none"></div><div style="flex: 1; min-width: 0"><div style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis"><a href="/fr/artist/1" data-testid="artist_title"><span>' + title + '</span></a></div><p>' + sub + '</p></div><div><button type="button" aria-label="Ajouter aux favoris" class="fav"><svg viewBox="0 0 24 24" width="20" height="20"><path d="M12 20s-7-4.5-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.5-7 10-7 10z"/></svg></button></div></div></div>';
+    pop.innerHTML = '<section role="dialog" class="popper-search" data-testid="search_popper" id="popper-search-1"><div class="css-450" style="display: flex; flex-direction: column; max-height: 440px; width: 450px; overflow-y: auto"><div style="display: flex; flex-direction: column"><div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 16px"><h2 data-testid="recent_search_title">Dernières recherches</h2><button type="button" aria-label="Effacer" data-testid="recent_search_clear_button"><svg data-testid="TrashIcon" viewBox="0 0 24 24" width="20" height="20"><path d="M6 6h12v14H6z"/></svg></button></div><div style="overflow: auto">' + row("BoyWithUke", "Artiste • 157 392 fans") + row("Toc toc", "Titre • Patrick Sébastien") + "</div></div></div></section>";
+    document.body.appendChild(pop);
+  };
+  window.__expandSidebar = (on) => {
+    document.querySelector(".naboo").style.setProperty("--layout-sidebar-width", on ? "243px" : "80px");
+  };
+</script>
+</body>
+</html>

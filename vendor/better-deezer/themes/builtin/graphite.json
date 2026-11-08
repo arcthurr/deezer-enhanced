@@ -1,0 +1,13 @@
+{
+  "schema": 1,
+  "id": "graphite",
+  "name": "Graphite",
+  "author": "Better Deezer",
+  "description": "The default: warm graphite, one violet accent. Light and dark.",
+  "version": "1.0.0",
+  "modes": [
+    "dark",
+    "light"
+  ],
+  "colors": {}
+}

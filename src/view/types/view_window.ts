@@ -10,4 +10,7 @@ export type ViewWindow = Window &
     Events?: Events;
     dzPlayer: DZPlayer;
     dataLayer: Array<DeezerUserIDCarrier>;
+    __betterDeezer?: {
+      features: () => Array<{ id: string; on: boolean; failed: boolean }>;
+    };
   };

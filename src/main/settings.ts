@@ -106,7 +106,10 @@ export const initializeSettings = async (
         disconnectDiscord();
       }
     },
-    adblock: () => {},
+    // Better Deezer is injected on page load, so a change needs a reload.
+    betterDeezer: () => {
+      view.webContents.reload();
+    },
   };
 
   await loadFromFile(SETTINGS_FILE);

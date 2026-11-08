@@ -1,0 +1,44 @@
+{
+  "schema": 1,
+  "id": "nocturne",
+  "name": "Nocturne",
+  "author": "Better Deezer",
+  "description": "Deep navy with an electric blue accent.",
+  "version": "1.0.0",
+  "modes": [
+    "dark",
+    "light"
+  ],
+  "colors": {
+    "dark": {
+      "bg": "#0a0d14",
+      "surface-1": "#10141e",
+      "surface-2": "#161b28",
+      "surface-3": "#1e2433",
+      "surface-4": "#283043",
+      "line": "#222838",
+      "line-strong": "#343c50",
+      "text": "#eef2fa",
+      "text-2": "#a9b3c7",
+      "text-3": "#8c96ab",
+      "accent": "#4f8cff",
+      "accent-text": "#8db4ff",
+      "on-accent": "#ffffff"
+    },
+    "light": {
+      "bg": "#f3f5f9",
+      "surface-1": "#fcfbf9",
+      "surface-2": "#e9edf4",
+      "surface-3": "#dde3ee",
+      "surface-4": "#cfd7e5",
+      "line": "#d9dfe9",
+      "line-strong": "#c3ccdb",
+      "text": "#0f1420",
+      "text-2": "#3f4a5e",
+      "text-3": "#5d6880",
+      "accent": "#2563eb",
+      "accent-text": "#1d4fc4",
+      "on-accent": "#fcfbf9"
+    }
+  }
+}

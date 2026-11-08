@@ -1,0 +1,82 @@
+{
+  "schema": 1,
+  "generated": "by scripts/build.mjs from themes/community, do not edit",
+  "themes": [
+    {
+      "schema": 1,
+      "id": "aurora",
+      "name": "Aurora",
+      "author": "Better Deezer contributors",
+      "description": "Night sky with a teal glow. Dark only.",
+      "version": "1.0.0",
+      "colors": {
+        "dark": {
+          "bg": "#071012",
+          "surface-1": "#0c181b",
+          "surface-2": "#112125",
+          "surface-3": "#182c31",
+          "surface-4": "#20393f",
+          "line": "#183036",
+          "line-strong": "#284650",
+          "text": "#e8f6f7",
+          "text-2": "#a2c1c4",
+          "text-3": "#84a5a9",
+          "accent": "#2dd4bf",
+          "accent-text": "#7eeadd",
+          "on-accent": "#032622"
+        }
+      },
+      "modes": [
+        "dark"
+      ],
+      "css": "html[data-bd-skin=\"aurora\"] [data-bd=\"dock\"] {\n  border-color: color-mix(in srgb, var(--bd-accent) 30%, var(--bd-line)) !important;\n}\n"
+    },
+    {
+      "schema": 1,
+      "id": "vinyl",
+      "name": "Vinyl",
+      "author": "Better Deezer contributors",
+      "description": "Sleeve paper and a mustard accent, for record collectors.",
+      "version": "1.0.0",
+      "colors": {
+        "dark": {
+          "bg": "#120f0b",
+          "surface-1": "#1a1611",
+          "surface-2": "#231d17",
+          "surface-3": "#2e261e",
+          "surface-4": "#3a3027",
+          "line": "#30281f",
+          "line-strong": "#45392d",
+          "text": "#f4ece0",
+          "text-2": "#c6b8a4",
+          "text-3": "#a89a87",
+          "accent": "#e0b04a",
+          "accent-text": "#ecc977",
+          "on-accent": "#2a1d03"
+        },
+        "light": {
+          "bg": "#f6f0e6",
+          "surface-1": "#fffaf2",
+          "surface-2": "#eee5d6",
+          "surface-3": "#e3d7c4",
+          "surface-4": "#d4c5ae",
+          "line": "#e4d9c7",
+          "line-strong": "#d0c0a8",
+          "text": "#1f1810",
+          "text-2": "#54473a",
+          "text-3": "#6f6152",
+          "accent": "#8a6212",
+          "accent-text": "#74510c",
+          "on-accent": "#ffffff"
+        }
+      },
+      "modes": [
+        "dark",
+        "light"
+      ],
+      "fonts": {
+        "display": "\"Bricolage Grotesque\", Georgia, serif"
+      }
+    }
+  ]
+}

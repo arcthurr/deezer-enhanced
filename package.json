@@ -7,17 +7,29 @@
     "url": "https://github.com/duzda/deezer-enhanced/issues"
   },
   "license": "MIT",
+  "engines": {
+    "node": ">=22 <25"
+  },
   "author": {
     "name": "duzda",
     "email": "duzda@disroot.org"
   },
   "main": ".vite/build/main.js",
   "scripts": {
+    "bd:build": "node scripts/build-better-deezer.mjs",
+    "bd:update": "node scripts/vendor-better-deezer.mjs",
+    "prestart": "npm run bd:build",
     "start": "electron-forge start",
+    "prepackage": "npm run bd:build",
     "package": "electron-forge package",
+    "premake": "npm run bd:build",
     "make": "electron-forge make",
+    "make:appimage": "electron-forge make --targets electron-forge-maker-appimage",
+    "make:pacman": "electron-forge make --targets electron-forge-maker-pacman && bash pacman-repack.sh $npm_package_version",
     "publish": "electron-forge publish",
-    "lint": "eslint --ext .ts,.tsx ."
+    "lint": "eslint --ext .ts,.tsx .",
+    "install:local": "bash scripts/install-local.sh",
+    "uninstall:local": "bash scripts/uninstall-local.sh"
   },
   "devDependencies": {
     "@electron-forge/cli": "7.8.3",
@@ -64,5 +76,15 @@
     "react-dom": "^19.1.1",
     "react-router": "^7.9.4"
   },
-  "private": "true"
+  "private": "true",
+  "allowScripts": {
+    "electron": true,
+    "esbuild": true,
+    "@tailwindcss/oxide": true,
+    "github:duzda/electron-forge-maker-appimage": true,
+    "github:duzda/electron-forge-maker-pacman": true,
+    "bufferutil": false,
+    "utf-8-validate": false,
+    "github:devsnek/node-register-scheme": false
+  }
 }

@@ -1,0 +1,112 @@
+/*
+ * Base layer: fonts, page ground, scrollbars, focus, motion.
+ * Scoped under html[data-bd] so nothing applies until the script has booted
+ * (and the kill switch `html[data-bd="off"]` disables everything).
+ */
+/* Fonts are loaded by features/fonts.js (an @import here would break once concatenated). */
+
+html[data-bd="on"],
+html[data-bd="on"] body {
+  background: var(--bd-bg) !important;
+  color: var(--bd-text);
+}
+
+html[data-bd="on"] body,
+html[data-bd="on"] button,
+html[data-bd="on"] input {
+  font-family: var(--bd-font-ui) !important;
+  font-feature-settings: "tnum" 0;
+}
+
+/* Section and page titles get the display face. Tagged by features/typography.js */
+html[data-bd="on"] [data-bd-role="section-title"],
+html[data-bd="on"] [data-bd-role="page-title"] {
+  font-family: var(--bd-font-display) !important;
+  letter-spacing: -0.02em !important;
+}
+
+html[data-bd="on"] [data-bd-role="page-title"] {
+  font-weight: 800 !important;
+  letter-spacing: -0.035em !important;
+  line-height: 0.95 !important;
+}
+
+/* Durations and counters line up */
+html[data-bd="on"] [data-testid*="duration" i],
+html[data-bd="on"] [data-testid*="time" i] {
+  font-variant-numeric: tabular-nums;
+}
+
+/*
+ * Thin, quiet scrollbars, drawn with ::-webkit-scrollbar. Not with scrollbar-width /
+ * scrollbar-color: since Chromium 121 those disable every ::-webkit-scrollbar rule
+ * of the element (Deezer hides some scrollbars that way), and on `html[...] *` they
+ * also beat Deezer's own `scrollbar-width: none` on its carousels, whose scrollbars
+ * then reappeared under every home row.
+ */
+html[data-bd="on"] ::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+  background: transparent;
+}
+html[data-bd="on"] ::-webkit-scrollbar-track {
+  background: transparent;
+  border: 0;
+}
+html[data-bd="on"] ::-webkit-scrollbar-thumb {
+  background: var(--bd-line-strong);
+  background-clip: padding-box;
+  border: 3px solid transparent;
+  border-radius: 999px;
+}
+html[data-bd="on"] ::-webkit-scrollbar-thumb:hover {
+  background-color: var(--bd-text-3);
+}
+html[data-bd="on"] ::-webkit-scrollbar-corner {
+  background: transparent;
+}
+/* Firefox: the standard properties, with zero specificity so Deezer's own `none` wins. */
+@supports not selector(::-webkit-scrollbar) {
+  :where(html[data-bd="on"]) * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--bd-line-strong) transparent;
+  }
+}
+
+/* Visible focus for keyboard users */
+html[data-bd="on"] :focus-visible {
+  outline: 2px solid var(--bd-accent-text) !important;
+  outline-offset: 2px !important;
+}
+
+html[data-bd="on"] a,
+html[data-bd="on"] button,
+html[data-bd="on"] [role="button"] {
+  transition:
+    background-color var(--bd-t-fast) var(--bd-ease),
+    color var(--bd-t-fast) var(--bd-ease),
+    opacity var(--bd-t-fast) var(--bd-ease),
+    transform var(--bd-t-fast) var(--bd-ease);
+}
+
+/* Page changes cross-fade when the browser supports it */
+@supports (view-transition-name: none) {
+  html[data-bd="on"] [data-bd="page"] {
+    view-transition-name: bd-page;
+  }
+  ::view-transition-old(bd-page),
+  ::view-transition-new(bd-page) {
+    animation-duration: var(--bd-t-base);
+    animation-timing-function: var(--bd-ease);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html[data-bd="on"] *,
+  html[data-bd="on"] *::before,
+  html[data-bd="on"] *::after {
+    animation-duration: 1ms !important;
+    transition-duration: 1ms !important;
+    scroll-behavior: auto !important;
+  }
+}

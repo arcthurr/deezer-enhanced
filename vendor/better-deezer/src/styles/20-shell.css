@@ -1,0 +1,501 @@
+/*
+ * Shell: floating rail (sidebar), top bar, floating player dock.
+ * Targets ONLY data-bd attributes set by JS from stable anchors.
+ * Never target Deezer's generated `css-xxxx` classes here: they change every release.
+ */
+
+/* ---------- Rail ---------- */
+/* Deezer: position fixed; top 0; bottom 0; width var(--layout-sidebar-width) (80px / 243px). */
+html[data-bd="on"] [data-bd="rail"] {
+  left: var(--bd-gap) !important;
+  top: var(--bd-gap) !important;
+  bottom: calc(var(--bd-dock-h) + var(--bd-gap) * 2) !important;
+  height: auto !important;
+  width: calc(var(--layout-sidebar-width, 80px) - var(--bd-gap)) !important;
+  min-width: 0 !important;
+  max-width: none !important;
+  box-sizing: border-box !important;
+  padding: var(--bd-s-2) 0 !important;
+  border: 1px solid var(--bd-line) !important;
+  border-radius: var(--bd-r-dock) !important;
+  background: var(--bd-surface-1) !important;
+  box-shadow: none !important;
+  overflow-x: hidden !important;
+  transform: none;
+  transition:
+    width var(--bd-t-layout) var(--bd-ease),
+    top var(--bd-t-layout) var(--bd-ease),
+    transform var(--bd-t-layout) var(--bd-ease) !important;
+}
+
+/* Both states: a floating column as tall as its content, centered vertically in the space
+   above the dock (as in Deezer Tweaks v0.1.62), scrolling inside once it fills that space. */
+html[data-bd="on"] [data-bd="rail"][data-bd-collapsed] {
+  top: 50% !important;
+  bottom: auto !important;
+  height: fit-content !important;
+  max-height: calc(100vh - var(--bd-dock-h) - var(--bd-gap) * 4) !important;
+  transform: translateY(calc(-50% - (var(--bd-dock-h) + var(--bd-gap)) / 2)) !important;
+}
+
+/* Expanded: the library list is the part that scrolls; it shrinks first. */
+html[data-bd="on"] [data-bd="rail"][data-bd-collapsed="false"] > * {
+  min-height: 0 !important;
+}
+
+/* Collapsed: every entry centered horizontally. */
+html[data-bd="on"] [data-bd="rail"][data-bd-collapsed="true"] {
+  padding: var(--bd-s-2) 0 !important;
+  gap: var(--bd-s-1) !important;
+  align-items: center !important;
+  overflow-y: auto !important;
+}
+
+html[data-bd="on"] [data-bd="rail"][data-bd-collapsed="true"] > * {
+  flex: none !important;
+  width: 100% !important;
+  min-height: 0 !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+}
+
+html[data-bd="on"] [data-bd="rail"][data-bd-collapsed="true"] :is(div, nav, ul, li, section) {
+  align-items: center !important;
+}
+
+/* A scrollbar would eat a few pixels on one side and shift every entry off center:
+   hide it in the rail, both states (wheel and touchpad scrolling still work). */
+html[data-bd="on"] [data-bd="rail"],
+html[data-bd="on"] [data-bd="rail"] * {
+  scrollbar-width: none !important;
+}
+
+html[data-bd="on"] [data-bd="rail"] ::-webkit-scrollbar {
+  display: none !important;
+}
+
+html[data-bd="on"] [data-bd="rail"][data-bd-collapsed="true"] :is(a, button) {
+  justify-content: center !important;
+  width: 44px !important;
+  min-width: 44px !important;
+  height: 44px !important;
+  margin-inline: auto !important;
+  padding: 0 !important;
+}
+
+html[data-bd="on"] [data-bd="rail"][data-bd-collapsed="true"] :is(a, button) img {
+  width: 36px !important;
+  height: 36px !important;
+}
+
+/* Inner wrappers of the rail lose their own backgrounds */
+html[data-bd="on"] [data-bd="rail"] :is(div, nav, section, ul, li) {
+  background-color: transparent !important;
+  background-image: none !important;
+}
+
+html[data-bd="on"] [data-bd="rail"] [data-bd-role="rail-sticky"] {
+  z-index: 2;
+  background-color: var(--bd-surface-1) !important;
+}
+
+/* Desktop app: Back / Forward chevrons on top of the rail. The website has none and the
+   rail is designed without them. */
+html[data-bd="on"] [data-bd="rail"] [data-bd-role="rail-history"] {
+  display: none !important;
+}
+
+html[data-bd="on"] [data-bd="rail"] :is(a, button) {
+  position: relative;
+  border-radius: var(--bd-r-card) !important;
+  color: var(--bd-text-2) !important;
+}
+
+html[data-bd="on"] [data-bd="rail"] :is(a, button):hover {
+  background-color: var(--bd-surface-2) !important;
+  color: var(--bd-text) !important;
+}
+
+html[data-bd="on"] [data-bd="rail"] :is(a, button):active {
+  background-color: var(--bd-surface-3) !important;
+}
+
+html[data-bd="on"] [data-bd="rail"] [aria-current="page"],
+html[data-bd="on"] [data-bd="rail"] [data-bd-active="true"] {
+  background-color: var(--bd-surface-3) !important;
+  color: var(--bd-text) !important;
+}
+
+html[data-bd="on"] [data-bd="rail"] [data-bd-active="true"] svg {
+  color: var(--bd-accent-text) !important;
+}
+
+/* Active marker: a short accent bar on the inner edge */
+html[data-bd="on"] [data-bd="rail"] [data-bd-active="true"]::before {
+  content: "";
+  position: absolute;
+  left: -6px;
+  top: 50%;
+  width: 3px;
+  height: 18px;
+  border-radius: var(--bd-r-pill);
+  background: var(--bd-accent);
+  transform: translateY(-50%);
+}
+
+html[data-bd="on"] [data-bd="rail"] img {
+  border-radius: var(--bd-r-cover) !important;
+  object-fit: cover !important;
+}
+
+/* ---------- Top bar ---------- */
+html[data-bd="on"] [data-bd="topbar"] {
+  background: color-mix(in srgb, var(--bd-bg) 82%, transparent) !important;
+  -webkit-backdrop-filter: blur(16px) saturate(1.2);
+  backdrop-filter: blur(16px) saturate(1.2);
+  border-bottom: 0 !important;
+  box-shadow: none !important;
+}
+
+/* Search always centered on the window, Home button on its left (features/topbar.js).
+   The search leaves the flow, so the remaining actions are pinned to the right. */
+html[data-bd="on"][data-bd-centered-search="true"] [data-bd="topbar"] {
+  justify-content: flex-end !important;
+}
+
+html[data-bd="on"][data-bd-centered-search="true"] [data-bd="search-slot"] {
+  position: absolute !important;
+  top: 50% !important;
+  left: var(--bd-search-center, 50%) !important;
+  width: var(--bd-search-width, 480px) !important;
+  max-width: none !important;
+  margin: 0 !important;
+  transform: translate(-50%, -50%) !important;
+  transition: width var(--bd-t-layout) var(--bd-ease), left var(--bd-t-layout) var(--bd-ease);
+}
+
+html[data-bd="on"][data-bd-centered-search="true"] [data-bd="search-slot"] :is([data-testid="search_container"], [data-bd="search-field-group"]) {
+  width: 100% !important;
+  max-width: none !important;
+}
+
+html[data-bd="on"] .bd-home {
+  position: absolute;
+  top: 50%;
+  left: calc(var(--bd-search-center, 50%) - var(--bd-search-width, 480px) / 2 - 56px);
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border-radius: var(--bd-r-pill);
+  background: var(--bd-surface-2);
+  color: var(--bd-text-2);
+  transform: translateY(-50%);
+  transition:
+    background-color var(--bd-t-fast) var(--bd-ease),
+    color var(--bd-t-fast) var(--bd-ease),
+    left var(--bd-t-layout) var(--bd-ease),
+    transform var(--bd-t-fast) var(--bd-ease);
+}
+
+html[data-bd="on"] .bd-home:hover {
+  background: var(--bd-surface-3);
+  color: var(--bd-text);
+  transform: translateY(-50%) scale(1.04);
+}
+
+html[data-bd="on"] .bd-home[aria-current="true"] {
+  color: var(--bd-text);
+}
+
+html[data-bd="on"] .bd-home svg {
+  width: 24px;
+  height: 24px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.75;
+  stroke-linejoin: round;
+}
+
+html[data-bd="on"] .bd-home[aria-current="true"] svg {
+  fill: currentColor;
+}
+
+html[data-bd="on"] [data-bd="search-field-group"] {
+  min-height: 48px !important;
+  border: 0 !important;
+  border-radius: var(--bd-r-pill) !important;
+  background: var(--bd-surface-2) !important;
+  box-shadow: none !important;
+  transition: background-color var(--bd-t-fast) var(--bd-ease) !important;
+}
+
+html[data-bd="on"] [data-bd="search-field-group"]:hover {
+  background: var(--bd-surface-3) !important;
+}
+
+/* Focus: a 2px accent border on the pill itself, never on the inner input */
+html[data-bd="on"] [data-bd="search-field-group"]:focus-within {
+  background: var(--bd-surface-2) !important;
+  box-shadow: inset 0 0 0 2px var(--bd-accent) !important;
+}
+
+html[data-bd="on"] [data-bd="search-field-group"] :is(input, div, span):not(.bd-kbd) {
+  border-color: transparent !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+html[data-bd="on"] [data-testid="search_field"] {
+  height: 48px !important;
+  background: transparent !important;
+  color: var(--bd-text) !important;
+  font-size: 15px !important;
+}
+
+html[data-bd="on"] [data-testid="search_field"]::placeholder {
+  color: var(--bd-text-3) !important;
+}
+
+html[data-bd="on"] .bd-kbd {
+  flex: none;
+  align-self: center;
+  height: auto;
+  margin-right: 14px;
+  padding: 2px 7px;
+  border: 1px solid var(--bd-line-strong);
+  border-radius: var(--bd-r-chip);
+  color: var(--bd-text-3);
+  font: 500 12px/1.4 var(--bd-font-ui);
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+/* Once something is typed, Deezer's clear (×) button takes that spot. */
+html[data-bd="on"] [data-bd="search-field-group"]:has([data-testid="search_field"]:not(:placeholder-shown)) .bd-kbd {
+  display: none;
+}
+
+/* ---------- Player dock ---------- */
+/* The user's design: floating rounded dock, round accent play button, filled
+   accent heart, times on each side of a thin accent bar. Parts tagged by features/player.js. */
+html[data-bd="on"] [data-bd="dock"] {
+  left: calc(var(--layout-sidebar-width, 80px) + var(--bd-gap)) !important;
+  right: var(--bd-gap) !important;
+  bottom: var(--bd-gap) !important;
+  width: auto !important;
+  min-width: 0 !important;
+  min-height: var(--bd-dock-h) !important;
+  height: var(--bd-dock-h) !important;
+  box-sizing: border-box !important;
+  padding-inline: var(--bd-s-4) !important;
+  border: 1px solid var(--bd-line) !important;
+  border-radius: var(--bd-r-dock) !important;
+  background: var(--bd-surface-1) !important;
+  box-shadow: var(--bd-shadow-dock) !important;
+  transform: none !important;
+  overflow: visible !important;
+}
+
+html[data-bd="on"] [data-bd="dock"] [data-testid="item_cover"],
+html[data-bd="on"] [data-bd="dock"] [data-testid="item_cover"] *,
+html[data-bd="on"] [data-bd="dock"] img {
+  border-radius: var(--bd-r-cover) !important;
+}
+
+html[data-bd="on"] [data-bd="dock"] [data-testid="item_title"] {
+  color: var(--bd-text) !important;
+  font-weight: 600 !important;
+}
+
+html[data-bd="on"] [data-bd="dock"] [data-testid="item_subtitle"] {
+  color: var(--bd-text-3) !important;
+}
+
+html[data-bd="on"] [data-bd="dock"] :is(button, [role="button"]) {
+  border-radius: var(--bd-r-pill) !important;
+  color: var(--bd-text-2);
+}
+
+html[data-bd="on"] [data-bd="dock"] :is(button, [role="button"]):hover {
+  background-color: var(--bd-surface-2) !important;
+  color: var(--bd-text) !important;
+}
+
+/* Tooltip wrappers around some buttons (e.g. "next") are block boxes taller than
+   the button: center their content so every icon sits on one line. */
+html[data-bd="on"] [data-bd="dock"] [role="group"] > div:has(> button) {
+  display: flex !important;
+  align-items: center !important;
+}
+
+/* Main play button: round accent disc, glyph in on-accent */
+html[data-bd="on"] [data-bd="dock"] [data-bd-role="play"] {
+  width: 32px !important;
+  height: 32px !important;
+  min-width: 32px !important;
+  border-radius: var(--bd-r-pill) !important;
+  background: var(--bd-accent) !important;
+  color: var(--bd-on-accent) !important;
+  box-shadow: none !important;
+  transition: background-color var(--bd-t-fast) var(--bd-ease), transform var(--bd-t-fast) var(--bd-ease) !important;
+}
+
+html[data-bd="on"] [data-bd="dock"] [data-bd-role="play"]:hover {
+  background: var(--bd-accent-hover) !important;
+  color: var(--bd-on-accent) !important;
+  transform: scale(1.05);
+}
+
+html[data-bd="on"] [data-bd="dock"] [data-bd-role="play"]:active {
+  background: var(--bd-accent-pressed) !important;
+  transform: scale(0.96);
+}
+
+html[data-bd="on"] [data-bd="dock"] [data-bd-role="play"] svg {
+  width: 20px !important;
+  height: 20px !important;
+  color: var(--bd-on-accent) !important;
+  fill: currentColor !important;
+}
+
+/* Heart: filled accent when liked */
+html[data-bd="on"] [data-bd="dock"] [data-bd-liked="true"],
+html[data-bd="on"] [data-bd="dock"] [data-bd-liked="true"]:hover {
+  color: var(--bd-accent) !important;
+}
+
+html[data-bd="on"] [data-bd="dock"] [data-bd-liked="true"] svg {
+  color: var(--bd-accent) !important;
+  fill: var(--bd-accent) !important;
+}
+
+html[data-bd="on"] [data-bd="dock"] [data-bd-liked="true"] svg path {
+  fill: var(--bd-accent) !important;
+}
+
+/* Seek row: elapsed | thin bar | remaining */
+html[data-bd="on"] [data-bd-role="progress-row"] {
+  display: flex !important;
+  align-items: center !important;
+  gap: var(--bd-s-3) !important;
+}
+
+html[data-bd="on"] [data-bd-slot="time-elapsed"] {
+  order: 0;
+  flex: none !important;
+}
+
+html[data-bd="on"] [data-bd-slot="progress"] {
+  order: 1;
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+}
+
+html[data-bd="on"] [data-bd-slot="time-remaining"] {
+  order: 2;
+  flex: none !important;
+}
+
+html[data-bd="on"] [data-bd-role="progress-row"] :is([data-testid="elapsed_time"], [data-testid="remaining_time"]) {
+  color: var(--bd-text-3) !important;
+  font: 500 12px/1 var(--bd-font-ui) !important;
+  font-variant-numeric: tabular-nums !important;
+}
+
+html[data-bd="on"] [data-bd-role="progress-track"] {
+  height: 4px !important;
+  border-radius: var(--bd-r-pill) !important;
+  overflow: visible !important;
+  transition: height var(--bd-t-fast) var(--bd-ease) !important;
+}
+
+html[data-bd="on"] [data-bd-role="progress-row"]:hover [data-bd-role="progress-track"] {
+  height: 6px !important;
+}
+
+html[data-bd="on"] [data-bd-role="progress-track"] > div {
+  height: 100% !important;
+  border-radius: var(--bd-r-pill) !important;
+  background: var(--bd-line-strong) !important;
+}
+
+html[data-bd="on"] [data-bd-role="progress-track"] > [data-bd-role="progress-fill"],
+html[data-bd="on"] [data-bd-role="progress-fill"] {
+  background: var(--bd-accent) !important;
+}
+
+/* Content clears the floating dock */
+html[data-bd="on"] [data-bd="page"] {
+  padding-bottom: calc(var(--bd-dock-h) + var(--bd-gap) * 3) !important;
+}
+
+@media (max-width: 899px) {
+  html[data-bd="on"] [data-bd="dock"] {
+    left: var(--bd-gap) !important;
+    height: 72px !important;
+    min-height: 72px !important;
+    border-radius: 18px !important;
+  }
+}
+
+/* Logged-out "Sign up for free" bar: a card floating just above the player bar. */
+html[data-bd="on"] [data-bd="signup-banner"] {
+  left: calc(var(--layout-sidebar-width, 80px) + var(--bd-gap)) !important;
+  right: var(--bd-gap) !important;
+  bottom: calc(var(--bd-dock-h) + var(--bd-gap) * 2) !important;
+  width: auto !important;
+  min-height: 64px !important;
+  height: auto !important;
+  box-sizing: border-box !important;
+  padding: 10px 12px 10px 14px !important;
+  border: 1px solid var(--bd-line) !important;
+  border-radius: var(--bd-r-dock) !important;
+  background: var(--bd-surface-2) !important;
+  box-shadow: var(--bd-shadow-pop) !important;
+}
+
+html[data-bd="on"] [data-bd="signup-banner"] h2 {
+  color: var(--bd-text) !important;
+  font-family: var(--bd-font-display) !important;
+  font-size: 16px !important;
+}
+
+html[data-bd="on"] [data-bd="signup-banner"] p {
+  color: var(--bd-text-2) !important;
+}
+
+html[data-bd="on"] [data-bd="signup-banner"] > div:first-child {
+  border-radius: var(--bd-r-chip) !important;
+  background: var(--bd-accent-soft) !important;
+  color: var(--bd-accent-text) !important;
+}
+
+html[data-bd="on"] [data-bd="signup-banner"] a {
+  border-radius: var(--bd-r-pill) !important;
+  background: var(--bd-accent) !important;
+  color: var(--bd-on-accent) !important;
+}
+
+@media (max-width: 899px) {
+  html[data-bd="on"] [data-bd="signup-banner"] {
+    left: var(--bd-gap) !important;
+  }
+}
+
+/* Text buttons inside the rail (e.g. logged-out "Create a playlist"): Deezer paints
+   them white with a text color our palette changes; make them primary pills. */
+html[data-bd="on"] [data-bd="rail"] button.chakra-button:not([aria-label]) {
+  border-radius: var(--bd-r-pill) !important;
+  background: var(--bd-text) !important;
+  color: var(--bd-bg) !important;
+}
+
+html[data-bd="on"] [data-bd="rail"] button.chakra-button:not([aria-label]):hover {
+  background: var(--bd-text-2) !important;
+}
+
+/* Sidebar entries switched off in Settings > Appearance > Sidebar (features/shell.js, rail-nav) */
+html[data-bd="on"] [data-bd="rail"] [data-bd-nav-hidden="true"] {
+  display: none !important;
+}

@@ -9,7 +9,7 @@ const OnSet: Setters = {
   deemixIntegration: () => {},
   volumePower: (newValue) => setVolumePower(newValue),
   discordRPC: () => {},
-  adblock: () => {},
+  betterDeezer: () => {},
 };
 
 export const initializeSettings = async () => {

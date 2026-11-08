@@ -1,0 +1,26 @@
+{
+  "name": "better-deezer",
+  "version": "1.1.3",
+  "private": true,
+  "description": "A cleaner, modern skin and quality-of-life layer for Deezer (web extension + Windows desktop).",
+  "license": "MIT",
+  "author": "Gabizoc",
+  "homepage": "https://github.com/Gabizoc/Better-Deezer#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Gabizoc/Better-Deezer.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Gabizoc/Better-Deezer/issues"
+  },
+  "keywords": ["deezer", "theme", "skin", "spicetify", "userscript", "chrome-extension", "electron"],
+  "type": "module",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "test": "node test/smoke.mjs",
+    "check": "node scripts/build.mjs && node --check dist/extension/better-deezer.js && node --check dist/better-deezer.user.js && node test/smoke.mjs"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

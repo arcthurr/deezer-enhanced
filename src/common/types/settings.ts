@@ -6,7 +6,7 @@ export interface Settings {
   deemixIntegration: boolean;
   volumePower: number;
   discordRPC: boolean;
-  adblock: boolean;
+  betterDeezer: boolean;
 }
 
 export const DEFAULT_SETTINGS: Settings = {
@@ -17,7 +17,7 @@ export const DEFAULT_SETTINGS: Settings = {
   deemixIntegration: false,
   volumePower: 4,
   discordRPC: false,
-  adblock: false,
+  betterDeezer: true,
 };
 
 type Setter<T extends keyof Settings> = (newValue: Settings[T]) => void;
