@@ -1,5 +1,5 @@
 import { promisify } from 'util';
-import { ExecException, exec as execProcess } from 'child_process';
+import { ExecException, execFile as execFileProcess } from 'child_process';
 import { ipcMain, WebContentsView } from 'electron';
 import { ExecStatus, WARNING_MESSAGES } from '../common/types/deemix';
 import {
@@ -7,7 +7,7 @@ import {
   DOWNLOADS_FINISHED,
 } from '../common/channels/downloads';
 
-const exec = promisify(execProcess);
+const execFile = promisify(execFileProcess);
 
 const containsWarning = (stdout: string) =>
   stdout
@@ -28,7 +28,7 @@ const getExecStatus = (stdout: string, stderr: string): ExecStatus => {
 
 const download = async (url: string, mainView: WebContentsView) => {
   try {
-    const { stdout, stderr } = await exec(`deemix ${url}`);
+    const { stdout, stderr } = await execFile('deemix', [url]);
     const execStatus = getExecStatus(stdout, stderr);
 
     mainView.webContents.send(
