@@ -1,4 +1,5 @@
 import {
+  appAPI,
   trayAPI,
   mprisAPI,
   settingsAPI,
@@ -9,6 +10,7 @@ import {
 declare global {
   interface Window {
     view: {
+      appAPI: typeof appAPI;
       settingsAPI: typeof settingsAPI;
       mprisAPI: typeof mprisAPI;
       trayAPI: typeof trayAPI;

@@ -8,13 +8,8 @@ import {
   SETTINGS_SHOW,
 } from './common/channels/settings';
 import { Settings } from './common/types/settings';
-import {
-  DOWNLOADS_DOWNLOAD,
-  DOWNLOADS_FINISHED,
-} from './common/channels/downloads';
 import { KEYBOARD_SEND_KEYPRESS } from './common/channels/keyboard';
 import { SerializedKeyboardEvent } from './common/types/serializedKeyboardEvent';
-import { ExecStatus } from './common/types/deemix';
 import { NOTIFICATIONS_CREATE } from './common/channels/notifications';
 import { THEMES_SET_STYLE } from './common/channels/themes';
 import {
@@ -37,29 +32,19 @@ export const historyAPI = {
   goBack: () => ipcRenderer.send(HISTORY_GO_BACK),
 };
 
-export const downloadsAPI = {
-  download: () => ipcRenderer.send(DOWNLOADS_DOWNLOAD),
-  onDownloadFinished: (
-    callback: (
-      status: ExecStatus,
-      url: string,
-      stdout: string,
-      stderr: string
-    ) => void
-  ) => {
-    ipcRenderer.on(
-      DOWNLOADS_FINISHED,
-      (_, status: ExecStatus, url: string, stdout: string, stderr: string) =>
-        callback(status, url, stdout, stderr)
-    );
-  },
-};
-
 export const settingsAPI = {
   getSettings: (): Promise<Settings> => ipcRenderer.invoke(SETTINGS_GET),
   setSettingProperty: <K extends keyof Settings>(key: K, value: Settings[K]) =>
     ipcRenderer.send(SETTINGS_SET_PROPERTY, key, value),
   resetSettings: () => ipcRenderer.send(SETTINGS_RESET),
+  onSetProperty: (
+    callback: <K extends keyof Settings>(key: K, value: Settings[K]) => void
+  ) => {
+    ipcRenderer.removeAllListeners(SETTINGS_SET_PROPERTY);
+    ipcRenderer.on(SETTINGS_SET_PROPERTY, (_, key, value) =>
+      callback(key, value)
+    );
+  },
   showSettings: () => ipcRenderer.send(SETTINGS_SHOW),
   hideSettings: () => ipcRenderer.send(SETTINGS_HIDE),
 };
@@ -116,7 +101,6 @@ export const betterDeezerAPI = {
 
 contextBridge.exposeInMainWorld('renderer', {
   historyAPI,
-  downloadsAPI,
   settingsAPI,
   keyboardAPI,
   notificationsAPI,

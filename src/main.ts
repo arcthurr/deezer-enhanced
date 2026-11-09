@@ -2,10 +2,15 @@ import { app, BaseWindow, session, WebContentsView } from 'electron';
 import path from 'path';
 import fs from 'fs';
 import { createHistoryHandles } from './main/history';
-import { getSettings, initializeSettings } from './main/settings';
+import {
+  getSettings,
+  initializeSettings,
+  wantsTransparentWindow,
+} from './main/settings';
+import { initializeApp } from './main/app';
+import { setLayoutState } from './main/layout';
 import { loadBounds } from './main/bounds/load';
 import { saveBounds } from './main/bounds/save';
-import { initializeDownloads } from './main/downloads';
 import { initializePlayer } from './main/mpris';
 import { initializeThemeSwitcher } from './main/theme_switcher';
 import { createKeyboardHandles } from './main/keyboard';
@@ -76,11 +81,17 @@ if (!gotTheLock) {
       }
     );
 
+    // Better Deezer's see-through mode: the window has to be created transparent.
+    const transparent = wantsTransparentWindow();
+
     const mainWindow = new BaseWindow({
       width: DEFAULT_WIDTH,
       height: DEFAULT_HEIGHT,
       autoHideMenuBar: true,
       show: false,
+      ...(transparent
+        ? { transparent: true, backgroundColor: '#00000000' }
+        : {}),
       icon: path.join(
         app.isPackaged ? process.resourcesPath : '.',
         'assets',
@@ -127,11 +138,18 @@ if (!gotTheLock) {
       return { action: 'deny' };
     });
 
-    initializeSettings(mainWindow, view).then(() =>
+    if (transparent) {
+      view.setBackgroundColor('#00000000');
+      mainView.setBackgroundColor('#00000000');
+    }
+
+    const onLayout = () => onDimensionsChange(mainWindow, mainView, view);
+
+    initializeSettings(mainWindow, mainView, view, onLayout).then(() =>
       loadBounds(mainWindow, mainView, view)
     );
+    initializeApp({ transparent });
     initializePlayer(mainView, view);
-    initializeDownloads(mainView, view);
     initializeThemeSwitcher(mainView, view);
     initializeZoom(mainWindow, mainView, view);
     initializeBetterDeezer(mainWindow, view);
@@ -165,12 +183,15 @@ if (!gotTheLock) {
       injectBetterDeezer(view);
 
       if (await isLoggedIn(view)) {
+        setLayoutState({ loggedIn: true, overlayOpen: false });
         mainView.webContents.send(LOGIN_ON_LOGIN);
         mainWindow.contentView.addChildView(view);
       } else {
+        setLayoutState({ loggedIn: false });
         mainWindow.contentView.removeChildView(view);
         mainView.webContents.send(LOGIN_ON_LOGOUT);
       }
+      onLayout();
     });
 
     // We listen to cookie addition and filter for the addition of session specific

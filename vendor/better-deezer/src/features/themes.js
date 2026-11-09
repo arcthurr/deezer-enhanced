@@ -189,6 +189,41 @@ BD.themesUI = {
         )
       ),
       ui.section(
+        BD.t("Transparence", "Translucency"),
+        ui.row(
+          BD.t("Mode translucide", "Translucent mode"),
+          BD.t(
+            "Barre de lecture, barre latérale, barre du haut, cartes, listes, menus, fenêtres et réglages deviennent transparents, avec un flou d'arrière-plan. Fonctionne avec tous les thèmes.",
+            "The player bar, sidebar, top bar, cards, lists, menus, dialogs and settings become see-through with a background blur. Works with every theme."
+          ),
+          ui.toggle("themes:translucent", false, () => (BD.skins.apply(), ui.refresh()))
+        ),
+        ui.row(
+          BD.t("Intensité", "Intensity"),
+          BD.t("Plus c'est fort, plus on voit ce qu'il y a derrière.", "The stronger, the more of what is behind shows through."),
+          ui.segmented(
+            "themes:translucent-level",
+            "medium",
+            [["soft", "Douce", "Soft"], ["medium", "Moyenne", "Medium"], ["strong", "Forte", "Strong"]],
+            (v) => (BD.settings.set("themes:translucent-level", v), BD.skins.apply()),
+            BD.settings.get("themes:translucent", false) !== true
+          )
+        ),
+        BD.app.available()
+          ? ui.row(
+              BD.t("Fenêtre transparente", "See-through window"),
+              BD.t(
+                "Le fond de la fenêtre devient transparent : on voit le bureau et les fenêtres derrière l'application (nécessite un compositeur). Pour flouter aussi le bureau, ajoutez une règle « Flou » à cette fenêtre dans votre gestionnaire de fenêtres. Demande un redémarrage.",
+                "The window background turns transparent: you see your desktop and the windows behind the app (needs a compositor). To blur the desktop too, add a “Blur” rule for this window in your window manager. Needs a restart."
+              ),
+              BD.appSettingsUI.toggle("transparentWindow", false, () => ui.refresh())
+            )
+          : null,
+        BD.app.available() && BD.app.get("transparentWindow", false) !== Boolean(BD.app.windowState.transparent)
+          ? BD.appSettingsUI.restartBar()
+          : null
+      ),
+      ui.section(
         BD.t("Vos thèmes", "Your themes"),
         BD.h("div", { class: "bd-theme-grid" }, ...mine),
         BD.h("div", { class: "bd-actions" }, this.button(BD.t("Créer un thème", "Create a theme"), () => this.editor(ui, BD.skins.get(BD.skins.activeId()), true)))

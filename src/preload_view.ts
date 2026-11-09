@@ -20,8 +20,12 @@ import {
 import { Repeat, Song, Episode } from './common/types/deezer';
 import {
   SETTINGS_GET,
+  SETTINGS_RESET,
   SETTINGS_SET_PROPERTY,
 } from './common/channels/settings';
+import { HISTORY_GO_BACK, HISTORY_GO_FORWARD } from './common/channels/history';
+import { APP_RELAUNCH, APP_WINDOW_STATE } from './common/channels/app';
+import { WindowState } from './common/types/app';
 import { Settings } from './common/types/settings';
 import { ZoomType } from './common/types/zoom';
 import {
@@ -45,6 +49,21 @@ export const settingsAPI = {
       callback(key, value)
     );
   },
+};
+
+/**
+ * What Better Deezer's top bar and settings panel (injected in the Deezer page) use:
+ * back / forward, the app's settings, restart. Values are checked in main.
+ */
+export const appAPI = {
+  goBack: () => ipcRenderer.send(HISTORY_GO_BACK),
+  goForward: () => ipcRenderer.send(HISTORY_GO_FORWARD),
+  setSetting: <K extends keyof Settings>(key: K, value: Settings[K]) =>
+    ipcRenderer.send(SETTINGS_SET_PROPERTY, key, value),
+  resetSettings: () => ipcRenderer.send(SETTINGS_RESET),
+  getWindowState: (): Promise<WindowState> =>
+    ipcRenderer.invoke(APP_WINDOW_STATE),
+  relaunch: () => ipcRenderer.send(APP_RELAUNCH),
 };
 
 export const mprisAPI = {
@@ -117,6 +136,7 @@ export const zoomAPI = {
 };
 
 contextBridge.exposeInMainWorld('view', {
+  appAPI,
   settingsAPI,
   mprisAPI,
   trayAPI,

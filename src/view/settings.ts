@@ -6,10 +6,10 @@ const OnSet: Setters = {
   closeToTray: () => {},
   startInTray: () => {},
   enableNotifications: () => {},
-  deemixIntegration: () => {},
   volumePower: (newValue) => setVolumePower(newValue),
   discordRPC: () => {},
   betterDeezer: () => {},
+  transparentWindow: () => {},
 };
 
 export const initializeSettings = async () => {
@@ -19,7 +19,6 @@ export const initializeSettings = async () => {
   OnSet.closeToTray(settings.closeToTray);
   OnSet.startInTray(settings.startInTray);
   OnSet.enableNotifications(settings.enableNotifications);
-  OnSet.deemixIntegration(settings.deemixIntegration);
   OnSet.volumePower(settings.volumePower);
   OnSet.discordRPC(settings.discordRPC);
 

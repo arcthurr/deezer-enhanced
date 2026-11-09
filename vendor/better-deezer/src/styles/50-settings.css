@@ -834,3 +834,37 @@
 .bd-nav-row[data-hidden="true"] .bd-nav-label {
   color: var(--bd-text-3);
 }
+
+/* ---------- Settings: sidebar groups and app-only controls ---------- */
+.bd-settings-group {
+  display: block;
+  margin: 14px 0 4px;
+  padding: 0 14px;
+  color: var(--bd-text-3);
+  font: 600 11px/1 var(--bd-font-ui);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.bd-settings-group:first-child {
+  margin-top: 2px;
+}
+
+.bd-range-wrap {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.bd-range {
+  width: 160px;
+  accent-color: var(--bd-accent);
+}
+
+.bd-range-value {
+  min-width: 2ch;
+  color: var(--bd-text-2);
+  font: 600 13px/1 var(--bd-font-ui);
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}

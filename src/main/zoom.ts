@@ -1,7 +1,7 @@
 import { BaseWindow, ipcMain, WebContentsView } from 'electron';
 import { ZOOM_SET } from '../common/channels/zoom';
 import { ZoomType } from '../common/types/zoom';
-import { NAVBAR_HEIGHT } from './utils/size';
+import { applyLayout } from './layout';
 
 // https://source.chromium.org/chromium/chromium/src/+/main:third_party/blink/common/page/page_zoom.cc;l=13;drc=3458a77f8572bcbc3eff3f4e498074330b3d8c00
 const ZOOM_STEPS: readonly number[] = [
@@ -33,21 +33,7 @@ export const onDimensionsChange = (
   mainWindow: BaseWindow,
   mainView: WebContentsView,
   view: WebContentsView
-) => {
-  const zoomFactor = mainView.webContents.getZoomFactor();
-  mainView.setBounds({
-    x: 0,
-    y: 0,
-    width: mainWindow.getBounds().width,
-    height: mainWindow.getBounds().height,
-  });
-  view.setBounds({
-    x: 0,
-    y: NAVBAR_HEIGHT * zoomFactor,
-    width: mainWindow.getBounds().width,
-    height: mainWindow.getBounds().height - NAVBAR_HEIGHT * zoomFactor,
-  });
-};
+) => applyLayout(mainWindow, mainView, view);
 
 const getNewZoomFactor = (view: WebContentsView, zoomType: ZoomType) => {
   const zoomFactor = view.webContents.getZoomFactor();

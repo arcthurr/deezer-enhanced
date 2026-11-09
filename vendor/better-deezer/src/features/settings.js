@@ -87,8 +87,16 @@ BD.feature({
     { id: "about", order: 90, label: ["À propos", "About"] }
   ],
 
+  /** Sidebar groups. Tabs without `group` belong to Better Deezer; app tabs only exist in the desktop app. */
+  groups: {
+    app: ["Deezer Enhanced", "Deezer Enhanced"],
+    bd: ["Better Deezer", "Better Deezer"]
+  },
+
   get tabs() {
-    return [...this.builtinTabs, ...BD.settingsTabs].sort((a, b) => a.order - b.order);
+    return [...this.builtinTabs, ...BD.settingsTabs]
+      .filter((t) => !t.when || t.when())
+      .sort((a, b) => a.order - b.order);
   },
 
   open(tab = BD.settings.get("settings:tab", "themes")) {
@@ -106,7 +114,15 @@ BD.feature({
       body.scrollTop = 0;
     };
     this.select = select;
+    // Group captions only when there is more than one group (desktop app: Deezer Enhanced + Better Deezer).
+    const grouped = new Set(this.tabs.map((t) => t.group || "bd")).size > 1;
+    let lastGroup = null;
     for (const t of this.tabs) {
+      const group = t.group || "bd";
+      if (grouped && group !== lastGroup) {
+        nav.append(BD.h("span", { class: "bd-settings-group", role: "presentation" }, BD.t(...this.groups[group])));
+        lastGroup = group;
+      }
       nav.append(BD.h("button", { type: "button", role: "tab", "data-tab": t.id, onclick: () => select(t.id) }, BD.t(...t.label)));
     }
 
@@ -570,7 +586,29 @@ BD.feature({
   tab_about() {
     const health = BD.checkHealth();
     const broken = Object.keys(health).filter((k) => health[k] === false);
+    const link = (href, fr, en) => BD.h("a", { class: "bd-btn bd-btn-ghost", href, target: "_blank", rel: "noopener" }, BD.t(fr, en));
+    const desktop = BD.app.available();
     return [
+      desktop
+        ? this.section(
+            "arcthurr's Deezer Enhanced",
+            BD.h(
+              "p",
+              { class: "bd-set-hint" },
+              BD.t(
+                "Une application de bureau non officielle pour Deezer, avec Better Deezer intégré : une seule barre du haut, des thèmes, un mode translucide (même fenêtre transparente), une barre de lecture pleine ou compacte, les paroles synchronisées et tous les réglages au même endroit.",
+                "An unofficial desktop app for Deezer with Better Deezer built in: a single top bar, themes, a translucent mode (even a see-through window), a full or compact player bar, synced lyrics, and every setting in one place."
+              )
+            ),
+            BD.h(
+              "div",
+              { class: "bd-actions" },
+              link("https://github.com/arcthurr/deezer-enhanced", "Code source", "Source code"),
+              link("https://github.com/arcthurr/deezer-enhanced/issues", "Signaler un problème", "Report an issue")
+            ),
+            BD.h("p", { class: "bd-set-hint" }, BD.t("Non affilié à Deezer. Licence MIT.", "Not affiliated with Deezer. MIT licence."))
+          )
+        : null,
       this.section(
         "Better Deezer",
         BD.h(
@@ -631,7 +669,22 @@ BD.feature({
           )
         ),
         BD.h("p", { class: "bd-set-hint" }, BD.t("Pour le réactiver : Ctrl , puis OK.", "To turn it back on: Ctrl , then OK."))
-      )
+      ),
+      desktop
+        ? this.section(
+            BD.t("Utilisé dans ce projet", "Used in this project"),
+            BD.h(
+              "p",
+              { class: "bd-set-hint" },
+              BD.t(
+                "Ce projet repose sur le travail des auteurs originaux. Merci à eux.",
+                "This project builds on the work of the original authors. Thanks to them."
+              )
+            ),
+            this.row("deezer-enhanced", BD.t("L'application d'origine (zone de notification, MPRIS, Discord) par duzda.", "The original app (tray, MPRIS, Discord) by duzda."), link("https://github.com/duzda/deezer-enhanced", "Voir", "View")),
+            this.row("Better Deezer", BD.t("Thèmes, Marketplace, paroles et lecteur flottant, par Gabizoc (MIT).", "Themes, Marketplace, lyrics and floating player, by Gabizoc (MIT)."), link("https://github.com/Gabizoc/Better-Deezer", "Voir", "View"))
+          )
+        : null
     ];
   }
 });

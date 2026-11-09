@@ -3,10 +3,11 @@ export interface Settings {
   closeToTray: boolean;
   startInTray: boolean;
   enableNotifications: boolean;
-  deemixIntegration: boolean;
   volumePower: number;
   discordRPC: boolean;
   betterDeezer: boolean;
+  /** See-through window (Better Deezer's translucent mode). Applied at the next start. */
+  transparentWindow: boolean;
 }
 
 export const DEFAULT_SETTINGS: Settings = {
@@ -14,10 +15,10 @@ export const DEFAULT_SETTINGS: Settings = {
   closeToTray: false,
   startInTray: false,
   enableNotifications: false,
-  deemixIntegration: false,
   volumePower: 4,
   discordRPC: false,
   betterDeezer: true,
+  transparentWindow: false,
 };
 
 type Setter<T extends keyof Settings> = (newValue: Settings[T]) => void;

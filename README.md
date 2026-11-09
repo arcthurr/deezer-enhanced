@@ -1,67 +1,91 @@
-# @arcthurr's deezer-enhanced
+# arcthurr's Deezer Enhanced
 
-An unofficial application for Deezer with enhanced features. This is a fork that is meant to get more features working, mainly from Gabizoc/Better-Deezer.
-Nothing is updated yet.
+An unofficial desktop app for [Deezer](https://www.deezer.com) with [Better Deezer](https://github.com/Gabizoc/Better-Deezer) built in. One clean top bar, themes, a translucent mode, a full or compact player bar and every setting in one place. Not affiliated with Deezer.
 
-## Credits
+> Status: personal project, Linux first (developed on Arch/CachyOS). It may work elsewhere but is untested.
 
-- @duzda: deezer-enhanced, the base of this app. More features are then added into the base deezer-enhanced made by @duzda.
-- @Gabizoc: better-deezer, the plugin added to the app,themes and more features. Added as a electron extension.
-- The Deezer application (website) designers.
+## Features
 
-## What is in this fork
+- **One top bar**: back / forward, Home, centered search, settings, notifications and profile, all in a single floating bar that fades into the page.
+- **Player bar**: full width, or a compact centered pill (Settings › Player bar).
+- **Themes**: built-in and community themes, a Marketplace, a theme editor, light / dark / auto.
+- **Translucent mode**: panels, cards, menus and dialogs turn see-through with a background blur, in three strengths. Optionally a **see-through window** that shows your desktop (needs a compositor and a restart).
+- **Synced lyrics**, a full-screen "Now playing" view, sleep timer, smooth transitions, accent color from the cover, compact mode.
+- **One settings panel** (the wrench in the top bar, or `Ctrl` + `,`): the app's own settings (tray, close / start in tray, notifications, Discord Rich Presence, non-linear volume curve, Better Deezer on / off, reset) sit next to all of Better Deezer's tabs.
+- **Desktop integration** from the original app: tray, MPRIS media controls, Discord Rich Presence, volume scrolling, zoom.
+- No adblock and no downloader: both were removed on purpose.
 
-- [duzda/deezer-enhanced](https://github.com/duzda/deezer-enhanced): the unofficial Deezer desktop app (tray, MPRIS, Discord presence, ...).
-- [Gabizoc/Better-Deezer](https://github.com/Gabizoc/Better-Deezer) (MIT) built in: themes, theme Marketplace, synced lyrics, floating player and more. Its source is copied into `vendor/better-deezer/` (plain files, no git submodule, licence kept), built into `assets/better-deezer.user.js` and injected into Deezer on every page load.
-- Settings has a **Better Deezer** section: on/off (Deezer reloads), live toggles for its main modules, and a button that opens Better Deezer's own panel (themes, Marketplace, sidebar, home).
-- Adblock was removed.
+## Install
 
-## Get it running (anyone who clones this repo)
-
-You need `git`, **Node.js 22 to 24** (22 LTS is what `.nvmrc` asks for, newer versions such as 26 break Electron's installer; `npm ci` refuses to run on them) and a C/C++ toolchain, because Electron's native modules are rebuilt (Arch/CachyOS: `base-devel`, Debian/Ubuntu: `build-essential`).
-
-Node version manager, if you have none (Arch/CachyOS: `sudo pacman -S fnm`; add `fnm env --use-on-cd --shell fish | source` to `~/.config/fish/config.fish`, or the bash/zsh equivalent):
+You need `git`, **Node.js 22 to 24** (`.nvmrc` asks for 22; newer versions break Electron's installer and `npm ci` refuses them) and a C/C++ toolchain, because Electron's native modules are rebuilt (Arch/CachyOS: `base-devel`, Debian/Ubuntu: `build-essential`).
 
 ```
+# Node version manager if you have none (Arch/CachyOS: sudo pacman -S fnm)
 fnm install 22 && fnm use 22
-git clone <this repo>
+
+git clone https://github.com/arcthurr/deezer-enhanced
 cd deezer-enhanced
 npm ci
+```
+
+### Try it (development)
+
+```
 npm start
 ```
 
-`npm start` builds Better Deezer first (`npm run bd:build`), so there is nothing else to set up.
+`npm start` builds Better Deezer first, so there is nothing else to set up.
 
-## Use it as a normal desktop app
+### Install as a normal app (no root)
 
 ```
-git clone https://github.com/arcthurr/deezer-enhanced/
-npm ci
 npm run install:local
 ```
 
-This packages the app and installs it for your user only (no root): `~/.local/share/deezer-enhanced`, an app launcher entry called **Deezer Enhanced** and an icon. It also registers the `deezer://` link used for login. Update by running the command again, remove it with `npm run uninstall:local`. Your login and settings live in `~/.config/deezer-enhanced` and are kept.
+Packages the app and installs it to `~/.local/share/deezer-enhanced` with a **Deezer Enhanced** launcher entry and icon, and registers the `deezer://` link used for login. Run it again to update; `npm run uninstall:local` removes it. Your login and settings in `~/.config/deezer-enhanced` are kept.
 
-Other formats (written to `out/make/`):
+### Other formats (written to `out/make/`)
 
 | Command | Result |
 | --- | --- |
-| `npm run make:appimage` | AppImage (needs `libarchive`/`bsdtar`) |
-| `npm run make:pacman` | Arch package, install with `sudo pacman -U out/make/deezer-enhanced-*.pacman` |
-| `npm run make` | everything the config lists: AppImage, pacman, deb and rpm (deb and rpm need `dpkg`, `fakeroot` and `rpm`) |
+| `npm run make:appimage` | AppImage (needs `libarchive` / `bsdtar`) |
+| `npm run make:pacman` | Arch package: `sudo pacman -U out/make/deezer-enhanced-*.pacman` |
+| `npm run make` | everything the config lists: AppImage, pacman, deb, rpm (deb and rpm need `dpkg`, `fakeroot`, `rpm`) |
 
-## Update Better Deezer
+## Using it
+
+- **Settings**: the wrench in the top bar. *Deezer Enhanced* tabs hold the app's settings, *Better Deezer* tabs hold themes, modules, appearance, sidebar, playback, home and more.
+- **Translucent mode**: Settings › Themes › Translucency. For the desktop to show through, also turn on *See-through window* and restart. To blur the desktop as well, add a "Blur" rule for the window in your window manager (for example KWin).
+- **Custom CSS**: put a `style.css` in `~/.config/deezer-enhanced`; it is hot reloaded. See [THEMING.md](THEMING.md).
+- **If Better Deezer is off**: the app falls back to its original layout (a tool strip above Deezer and the old settings page), where you can turn it back on.
+
+## How it is built
+
+- Electron + Vite + TypeScript. `src/main` is the main process, `src/view` runs inside the Deezer page, `src/renderer` is the small React UI used for login and the legacy layout.
+- Better Deezer's source lives as plain files in `vendor/better-deezer/` (no submodule, licence kept). It is built into `assets/better-deezer.user.js` and injected into Deezer on every page load.
+- This fork adds to the vendored code: the desktop top bar (`features/desktop-bar.js`), the app settings tabs (`features/app-settings.js`), the app bridge (`core/40-app.js`), the Player bar tab and the extended translucent mode. `npm run bd:update` replaces `vendor/better-deezer/`, so these changes must be re-applied (or merged) after an update.
 
 ```
-npm run bd:update            # newest Better Deezer from GitHub into vendor/
-npm run bd:update -- v1.1.3  # or a specific tag, branch or commit
+npm run bd:build            # rebuild the Better Deezer payload
+npm run bd:update           # newest Better Deezer from GitHub into vendor/
+npm run bd:update -- v1.1.3 # a specific tag, branch or commit
+npm run lint
 ```
-
-Then commit `vendor/better-deezer`. `vendor/better-deezer/UPSTREAM.txt` records which commit is in the repo.
 
 ## Troubleshooting
 
-- **`npm ci` says "Fetching packages of type git have been disabled" (`EALLOWGIT`)**: npm 11+ blocks git dependencies. The repo's `.npmrc` sets `allow-git=all`; if your npm ignores it, run `npm ci --allow-git=all`.
-- **"install scripts blocked" warnings**: npm 12 blocks install scripts unless they are listed in `allowScripts` in `package.json`. Electron, esbuild, Tailwind's engine and the two forge makers are already allowed there. The native `bufferutil`, `utf-8-validate` and `register-scheme` are denied on purpose: electron-forge rebuilds the native modules for Electron by itself.
-- **"Electron failed to install correctly"** after `npm ci`: remove `node_modules/electron` and `~/.cache/electron`, switch to Node 22 (`fnm use 22`) and run `npm ci` again. On Node 26 the Electron unpacking was seen to stop after the first file, which is why `engines` and `engine-strict` now stop `npm ci` on unsupported Node versions.
-- **Better Deezer does not show up**: check that `assets/better-deezer.user.js` exists (`npm run bd:build` creates it) and that Settings > Better Deezer is on.
+- **`npm ci` says "Fetching packages of type git have been disabled" (`EALLOWGIT`)**: npm 11+ blocks git dependencies. `.npmrc` sets `allow-git=all`; if your npm ignores it, run `npm ci --allow-git=all`.
+- **"install scripts blocked" warnings**: npm 12 blocks install scripts unless listed in `allowScripts` in `package.json`. Electron, esbuild, Tailwind's engine and the forge makers are allowed; the native `bufferutil`, `utf-8-validate` and `register-scheme` are denied on purpose because electron-forge rebuilds native modules itself.
+- **"Electron failed to install correctly"**: remove `node_modules/electron` and `~/.cache/electron`, switch to Node 22 (`fnm use 22`) and run `npm ci` again.
+- **Better Deezer does not show up**: check that `assets/better-deezer.user.js` exists (`npm run bd:build`) and that Settings › Advanced › Enable Better Deezer is on.
+- **See-through window is black**: your session has no compositor, or the window was not restarted after enabling it.
+
+## Credits
+
+- [duzda/deezer-enhanced](https://github.com/duzda/deezer-enhanced): the original app this is a fork of (tray, MPRIS, Discord presence).
+- [Gabizoc/Better-Deezer](https://github.com/Gabizoc/Better-Deezer) (MIT): themes, Marketplace, lyrics, floating player and the panel this project's settings build on.
+- The Deezer web player and its designers. Deezer is a trademark of its owner; this project is not affiliated with or endorsed by Deezer.
+
+## License
+
+MIT, see [LICENSE](LICENSE). Better Deezer's own MIT licence is kept in `vendor/better-deezer/LICENSE`.

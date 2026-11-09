@@ -27,6 +27,17 @@ BD.feature({
     input.dispatchEvent(new MouseEvent("mouseup", init));
   },
 
+  /** Settings > Appearance > Player bar: "full" (default) or "compact" (narrow, centered). */
+  applyWidth() {
+    const compact = BD.settings.get("dock:width", "full") === "compact";
+    BD.mark(document.documentElement, compact ? "compact" : "full", "data-bd-dock");
+  },
+
+  setup() {
+    this.applyWidth();
+    BD.on("settings", (key) => key === "dock:width" && this.applyWidth());
+  },
+
   update() {
     const dock = BD.q('[data-bd="dock"]');
     if (!dock) return;
@@ -64,4 +75,21 @@ BD.feature({
       }
     }
   }
+});
+
+/* Settings > Player bar: its own tab, so the width choice is easy to find. */
+BD.settingsTab({
+  id: "dock",
+  order: 8,
+  label: ["Barre de lecture", "Player bar"],
+  render: (ui) => [
+    ui.section(
+      BD.t("Largeur", "Width"),
+      ui.row(
+        BD.t("Taille de la barre de lecture", "Player bar size"),
+        BD.t("Pleine : sur toute la largeur de la fenêtre. Compacte : une pilule étroite, centrée en bas.", "Full: across the whole window. Compact: a narrow pill, centered at the bottom."),
+        ui.segmented("dock:width", "full", [["full", "Pleine", "Full"], ["compact", "Compacte", "Compact"]])
+      )
+    )
+  ]
 });

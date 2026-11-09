@@ -52,18 +52,6 @@ function SettingsForm(): React.JSX.Element {
           });
         }}
       />
-      <Switch
-        id="deemix-integration"
-        state={currentSettings.deemixIntegration}
-        text="Enable Deemix integration"
-        onChange={(newValue) => {
-          setValue('deemixIntegration', newValue);
-          setCurrentSettings({
-            ...currentSettings,
-            deemixIntegration: newValue,
-          });
-        }}
-      />
       <NumberInput
         id="volume-power"
         value={currentSettings.volumePower.toString()}

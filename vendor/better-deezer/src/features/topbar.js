@@ -63,11 +63,14 @@ BD.feature({
     // Right-hand actions: everything in the top bar except the search and our button.
     let rightLimit = tb.width - this.EDGE;
     for (const child of topbar.children) {
-      if (child === slot || child.classList.contains("bd-home")) continue;
+      if (child === slot || child.classList.contains("bd-home") || child.classList.contains("bd-app-nav")) continue;
       const r = child.getBoundingClientRect();
       if (r.width && r.left - tb.left > tb.width / 2) rightLimit = Math.min(rightLimit, r.left - tb.left - this.EDGE);
     }
-    const leftLimit = this.EDGE + this.HOME_W + this.GAP;
+    // Desktop app: back / forward sit at the left end of the bar (features/desktop-bar.js).
+    const nav = BD.q(".bd-app-nav", topbar);
+    const navW = nav ? nav.getBoundingClientRect().width + this.GAP : 0;
+    const leftLimit = this.EDGE + navW + this.HOME_W + this.GAP;
 
     let center = innerWidth / 2 - tb.left;
     const desired = Math.min(600, Math.max(320, innerWidth * 0.4));

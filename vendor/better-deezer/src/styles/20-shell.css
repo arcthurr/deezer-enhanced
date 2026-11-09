@@ -38,9 +38,23 @@ html[data-bd="on"] [data-bd="rail"][data-bd-collapsed] {
   transform: translateY(calc(-50% - (var(--bd-dock-h) + var(--bd-gap)) / 2)) !important;
 }
 
-/* Expanded: the library list is the part that scrolls; it shrinks first. */
+/* Expanded: when the window is too short, the rail scrolls as a whole. Children keep their
+   content height (flex-shrink: 0), otherwise they squash and their text overlaps. */
+html[data-bd="on"] [data-bd="rail"][data-bd-collapsed="false"] {
+  overflow-y: auto !important;
+}
+
 html[data-bd="on"] [data-bd="rail"][data-bd-collapsed="false"] > * {
-  min-height: 0 !important;
+  flex-shrink: 0 !important;
+  min-height: auto !important;
+}
+
+/* Long names are cut with an ellipsis instead of wrapping onto the next row. */
+html[data-bd="on"] [data-bd="rail"][data-bd-collapsed="false"] :is(a, button) :is(span, p) {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 /* Collapsed: every entry centered horizontally. */
@@ -149,12 +163,31 @@ html[data-bd="on"] [data-bd="rail"] img {
 }
 
 /* ---------- Top bar ---------- */
+/* Buttons float (pills, see 70-desktop.css); the bar itself is only a soft veil on ::before
+   that fades out over ~70px, so content never hits a hard line. */
 html[data-bd="on"] [data-bd="topbar"] {
-  background: color-mix(in srgb, var(--bd-bg) 82%, transparent) !important;
-  -webkit-backdrop-filter: blur(16px) saturate(1.2);
-  backdrop-filter: blur(16px) saturate(1.2);
+  isolation: isolate;
+  background: transparent !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
   border-bottom: 0 !important;
   box-shadow: none !important;
+}
+
+html[data-bd="on"] [data-bd="topbar"]::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 -72px -64px;
+  z-index: -1;
+  pointer-events: none;
+  background: color-mix(in srgb, var(--bd-bg) 78%, transparent);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  /* Long fade down, and in from the left so there is no edge against the sidebar. */
+  -webkit-mask-image: linear-gradient(to bottom, #000 0, #000 28%, transparent 100%), linear-gradient(to right, transparent 0, #000 72px);
+  mask-image: linear-gradient(to bottom, #000 0, #000 28%, transparent 100%), linear-gradient(to right, transparent 0, #000 72px);
+  -webkit-mask-composite: source-in;
+  mask-composite: intersect;
 }
 
 /* Search always centered on the window, Home button on its left (features/topbar.js).
@@ -280,7 +313,8 @@ html[data-bd="on"] [data-bd="search-field-group"]:has([data-testid="search_field
 /* The user's design: floating rounded dock, round accent play button, filled
    accent heart, times on each side of a thin accent bar. Parts tagged by features/player.js. */
 html[data-bd="on"] [data-bd="dock"] {
-  left: calc(var(--layout-sidebar-width, 80px) + var(--bd-gap)) !important;
+  /* Full width: the rail stops above the dock (see rail `bottom`), so the dock runs under it. */
+  left: var(--bd-gap) !important;
   right: var(--bd-gap) !important;
   bottom: var(--bd-gap) !important;
   width: auto !important;
@@ -295,6 +329,14 @@ html[data-bd="on"] [data-bd="dock"] {
   box-shadow: var(--bd-shadow-dock) !important;
   transform: none !important;
   overflow: visible !important;
+}
+
+/* Compact player bar (Settings > Appearance > Player bar): narrow, centered on the window. */
+html[data-bd="on"][data-bd-dock="compact"] [data-bd="dock"] {
+  left: 50% !important;
+  right: auto !important;
+  width: min(760px, calc(100vw - var(--bd-gap) * 2)) !important;
+  transform: translateX(-50%) !important;
 }
 
 html[data-bd="on"] [data-bd="dock"] [data-testid="item_cover"],
@@ -441,7 +483,7 @@ html[data-bd="on"] [data-bd="page"] {
 
 /* Logged-out "Sign up for free" bar: a card floating just above the player bar. */
 html[data-bd="on"] [data-bd="signup-banner"] {
-  left: calc(var(--layout-sidebar-width, 80px) + var(--bd-gap)) !important;
+  left: var(--bd-gap) !important;
   right: var(--bd-gap) !important;
   bottom: calc(var(--bd-dock-h) + var(--bd-gap) * 2) !important;
   width: auto !important;
@@ -498,4 +540,70 @@ html[data-bd="on"] [data-bd="rail"] button.chakra-button:not([aria-label]):hover
 /* Sidebar entries switched off in Settings > Appearance > Sidebar (features/shell.js, rail-nav) */
 html[data-bd="on"] [data-bd="rail"] [data-bd-nav-hidden="true"] {
   display: none !important;
+}
+
+/* ---------- Translucent mode (Settings > Themes > Translucency) ----------
+   core/30-themes.js sets data-bd-glass, --bd-glass-alpha / --bd-glass-blur / --bd-win-alpha and,
+   in the generated theme CSS, see-through --bd-surface-1..4 and --bd-win-bg (so every card, row,
+   button and menu already shows what is behind it). Here: the ground itself, and the blur.
+   data-bd-seethrough is set when the app window is transparent (core/40-app.js): the ground then
+   lets the desktop through. */
+
+/* Ground: the page ground is a soft glow of the accent, so translucent panels have
+   something to show even on a flat page; with a transparent window it is see-through. */
+html[data-bd="on"][data-bd-glass="true"] {
+  background-color: var(--bd-bg) !important;
+  background-image:
+    radial-gradient(60% 55% at 12% 0%, color-mix(in srgb, var(--bd-accent) 26%, transparent), transparent 70%),
+    radial-gradient(55% 50% at 92% 100%, color-mix(in srgb, var(--bd-accent) 18%, transparent), transparent 70%) !important;
+  background-attachment: fixed !important;
+}
+
+html[data-bd="on"][data-bd-glass="true"][data-bd-seethrough="true"] {
+  background-color: var(--bd-win-bg, transparent) !important;
+}
+
+html[data-bd="on"][data-bd-glass="true"] body {
+  background: transparent !important;
+}
+
+/* Deezer's own wrappers take their ground from these tokens (05-tempo.css). */
+html[data-bd="on"][data-bd-glass="true"],
+html[data-bd="on"][data-bd-glass="true"] [data-theme] {
+  --tempo-colors-background-neutral-primary-default: var(--bd-win-bg, transparent) !important;
+  --tempo-colors-background-neutral-primary-disabled: var(--bd-win-bg, transparent) !important;
+}
+
+html[data-bd="on"][data-bd-glass="true"] :is(.naboo, [data-bd="page"], #page_content) {
+  background: transparent !important;
+}
+
+/* Blurred panels. */
+html[data-bd="on"][data-bd-glass="true"] :is([data-bd="dock"], [data-bd="rail"], [data-bd="signup-banner"], [data-bd="modal"], [data-bd="popover"], [data-bd="search-popover"], [data-bd="account-menu"], [data-bd="context-menu"], [data-bd="notifications"], [data-bd="menu"]),
+html[data-bd-glass="true"] :is(.bd-settings-panel, .bd-welcome, .bd-app-toast) {
+  background: var(--bd-surface-1) !important;
+  -webkit-backdrop-filter: blur(var(--bd-glass-blur, 22px)) saturate(1.5);
+  backdrop-filter: blur(var(--bd-glass-blur, 22px)) saturate(1.5);
+}
+
+html[data-bd="on"][data-bd-glass="true"] [data-bd="topbar"]::before {
+  background: var(--bd-surface-1);
+  -webkit-backdrop-filter: blur(var(--bd-glass-blur, 22px)) saturate(1.5);
+  backdrop-filter: blur(var(--bd-glass-blur, 22px)) saturate(1.5);
+}
+
+html[data-bd="on"][data-bd-glass="true"] [data-bd="rail"] [data-bd-role="rail-sticky"] {
+  background-color: transparent !important;
+}
+
+/* Full screen "Now playing" view and the settings backdrop. */
+html[data-bd-glass="true"] #bd-np {
+  background: var(--bd-win-bg, var(--bd-bg));
+  -webkit-backdrop-filter: blur(var(--bd-glass-blur, 22px));
+  backdrop-filter: blur(var(--bd-glass-blur, 22px));
+}
+
+html[data-bd-glass="true"] .bd-settings-scrim {
+  -webkit-backdrop-filter: blur(calc(var(--bd-glass-blur, 22px) / 2));
+  backdrop-filter: blur(calc(var(--bd-glass-blur, 22px) / 2));
 }

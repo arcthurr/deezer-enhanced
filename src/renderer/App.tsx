@@ -1,13 +1,10 @@
 import { Route, Routes, useNavigate } from 'react-router';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useSetAtom } from 'jotai';
 import SettingsPage from './pages/SettingsPage';
 import LoginPage from './pages/LoginPage';
 import Navigation from './components/Navigation';
 import { currentSettingsAtom } from './states/atoms';
-import LogPage from './pages/LogPage';
-import LogNavigation from './components/LogNavigation';
-import { NotificationData } from './components/Downloads/notifications';
 import { NOTIFICATIONS_TAG } from '../common/channels/notifications';
 
 import './index.css';
@@ -31,22 +28,6 @@ const getStyles = () =>
 function App(): React.JSX.Element {
   const setCurrentSettings = useSetAtom(currentSettingsAtom);
   const navigate = useNavigate();
-
-  const [notificationsQueue, setNotificationsQueue] = useState<
-    NotificationData[]
-  >([]);
-
-  useEffect(() => {
-    window.renderer.downloadsAPI.onDownloadFinished(
-      async (status, url, stdout, stderr) => {
-        setNotificationsQueue([
-          ...notificationsQueue,
-          { status, url, stdout, stderr },
-        ]);
-      }
-    );
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [setNotificationsQueue]);
 
   useEffect(() => {
     const handleKeydown = (event: KeyboardEvent) => {
@@ -99,6 +80,11 @@ function App(): React.JSX.Element {
     };
 
     updateSettings();
+
+    // Settings can also change from Better Deezer's panel in the Deezer page.
+    window.renderer.settingsAPI.onSetProperty((key, value) =>
+      setCurrentSettings((previous) => ({ ...previous, [key]: value }))
+    );
   }, [setCurrentSettings]);
 
   return (
@@ -106,22 +92,14 @@ function App(): React.JSX.Element {
       <Routes>
         <Route index element={null} />
         <Route path="login" element={null} />
-        <Route
-          path="idle"
-          element={<Navigation notificationsQueue={notificationsQueue} />}
-        />
-        <Route
-          path="settings"
-          element={<Navigation notificationsQueue={notificationsQueue} />}
-        />
-        <Route path="log" element={<LogNavigation />} />
+        <Route path="idle" element={<Navigation />} />
+        <Route path="settings" element={<Navigation />} />
       </Routes>
       <Routes>
         <Route index element={null} />
         <Route path="login" element={<LoginPage />} />
         <Route path="idle" element={null} />
         <Route path="settings" element={<SettingsPage />} />
-        <Route path="log" element={<LogPage />} />
       </Routes>
     </div>
   );

@@ -8,7 +8,7 @@ import {
   STEAMDECK_DEFAULT_BOUNDS,
 } from './types';
 import { getSettings } from '../settings';
-import { NAVBAR_HEIGHT } from '../utils/size';
+import { navbarHeight } from '../layout';
 import { setZoomFactor } from '../zoom';
 
 const isSteamDeck = () => {
@@ -53,9 +53,9 @@ export const loadBounds = async (
 
   view.setBounds({
     x: 0,
-    y: NAVBAR_HEIGHT * zoom,
+    y: navbarHeight() * zoom,
     width,
-    height: height - NAVBAR_HEIGHT * zoom,
+    height: height - navbarHeight() * zoom,
   });
 
   mainView.webContents.once('did-navigate', () =>

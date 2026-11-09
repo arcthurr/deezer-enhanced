@@ -201,6 +201,22 @@ BD.skins = {
       if (p.text && p.bg) vars["text-disabled"] = `color-mix(in srgb, ${p.text} 38%, ${p.bg})`;
       out += `${sel}[data-bd-theme="${mode}"] {\n${decl(vars)}\n}\n`;
     }
+    // Translucent mode: every surface becomes see-through (so cards, rows, menus and the
+    // panels all show what is behind them), and the window ground follows --bd-win-alpha
+    // when the app window itself is transparent. Generated from the full palette so it
+    // works for every theme, including the ones that only set an accent.
+    if (BD.settings.get("themes:translucent", false) === true) {
+      for (const mode of ["dark", "light"]) {
+        if (theme.modes && !theme.modes.includes(mode)) continue;
+        const p = this.palette(theme, mode);
+        const glass = {};
+        for (const k of ["surface-1", "surface-2", "surface-3", "surface-4"]) {
+          if (p[k]) glass[k] = `color-mix(in srgb, ${p[k]} var(--bd-glass-alpha, 64%), transparent)`;
+        }
+        if (p.bg) glass["win-bg"] = `color-mix(in srgb, ${p.bg} var(--bd-win-alpha, 70%), transparent)`;
+        out += `${sel}[data-bd-theme="${mode}"][data-bd-glass="true"] {\n${decl(glass)}\n}\n`;
+      }
+    }
     const extra = {};
     for (const [k, v] of Object.entries(theme.radius || {})) extra[`r-${k}`] = `${v}px`;
     if (theme.fonts?.display) extra["font-display"] = theme.fonts.display;
@@ -208,6 +224,24 @@ BD.skins = {
     if (Object.keys(extra).length) out += `${sel} {\n${decl(extra)}\n}\n`;
     if (theme.css) out += `/* ${theme.id}: theme CSS */\n${theme.css}\n`;
     return out;
+  },
+
+  /**
+   * Translucent mode strength. [panel opacity %, blur px, window ground opacity %].
+   * A higher level shows more of what is behind (the page, or the desktop when the
+   * app window is transparent).
+   */
+  GLASS_LEVELS: { soft: [82, 14, 88], medium: [64, 22, 72], strong: [46, 32, 54] },
+
+  applyGlass() {
+    const html = document.documentElement;
+    const on = BD.settings.get("themes:translucent", false) === true;
+    const level = BD.settings.get("themes:translucent-level", "medium");
+    const [alpha, blur, win] = this.GLASS_LEVELS[level] || this.GLASS_LEVELS.medium;
+    BD.mark(html, String(on), "data-bd-glass");
+    html.style.setProperty("--bd-glass-alpha", `${alpha}%`);
+    html.style.setProperty("--bd-glass-blur", `${blur}px`);
+    html.style.setProperty("--bd-win-alpha", `${win}%`);
   },
 
   /** Apply a theme now (preview = do not save it as the active one). */
@@ -226,6 +260,7 @@ BD.skins = {
     html.setAttribute("data-bd-skin-modes", modes.join(" "));
     BD.theme.forced = modes.length === 1 ? modes[0] : null;
     BD.theme.apply();
+    this.applyGlass();
     if (!preview) BD.emit("skin", theme);
   },
 
