@@ -1,4 +1,4 @@
-import { app, BaseWindow, session, WebContentsView } from 'electron';
+import { app, BaseWindow, session, shell, WebContentsView } from 'electron';
 import path from 'path';
 import fs from 'fs';
 import { createHistoryHandles } from './main/history';
@@ -33,6 +33,32 @@ import {
 
 const USER_AGENT =
   'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36';
+
+const isHttpsUrl = (url: string) => {
+  try {
+    return new URL(url).protocol === 'https:';
+  } catch {
+    return false;
+  }
+};
+
+const isTrustedDeezerUrl = (url: string) => {
+  try {
+    const { protocol, hostname } = new URL(url);
+    return (
+      protocol === 'https:' &&
+      (hostname === 'deezer.com' || hostname.endsWith('.deezer.com'))
+    );
+  } catch {
+    return false;
+  }
+};
+
+// The app's own renderer: dev server URL or a local file.
+const isAppUrl = (url: string) =>
+  url.startsWith('file://') ||
+  (!!MAIN_WINDOW_VITE_DEV_SERVER_URL &&
+    url.startsWith(MAIN_WINDOW_VITE_DEV_SERVER_URL));
 
 const gotTheLock = app.requestSingleInstanceLock();
 
@@ -134,9 +160,29 @@ if (!gotTheLock) {
       },
     });
 
-    view.webContents.setWindowOpenHandler(() => {
+    view.webContents.setWindowOpenHandler(({ url }) => {
+      if (isHttpsUrl(url)) shell.openExternal(url);
       return { action: 'deny' };
     });
+
+    // Keep both views on their intended origins; send everything else to the browser.
+    mainView.webContents.setWindowOpenHandler(() => ({ action: 'deny' }));
+    mainView.webContents.on('will-navigate', (event, url) => {
+      if (!isAppUrl(url)) event.preventDefault();
+    });
+    view.webContents.on('will-navigate', (event, url) => {
+      if (!isTrustedDeezerUrl(url)) {
+        event.preventDefault();
+        if (isHttpsUrl(url)) shell.openExternal(url);
+      }
+    });
+
+    // Deny all permission requests (camera, mic, geolocation...) except what a
+    // music player needs.
+    session.defaultSession.setPermissionRequestHandler(
+      (_wc, permission, callback) =>
+        callback(['media', 'fullscreen', 'notifications'].includes(permission))
+    );
 
     if (transparent) {
       view.setBackgroundColor('#00000000');

@@ -13,7 +13,13 @@ import {
 import { LOGIN_MAP, LoginType } from '../common/types/login';
 import { DEEZER_URL } from './utils/urls';
 
-const setArl = async (view: WebContentsView, arl: string) => {
+// ARL cookies are opaque ASCII tokens; reject anything else (control chars,
+// separators, absurd lengths) before it reaches the cookie jar.
+const ARL_PATTERN = /^[A-Za-z0-9_-]{16,512}$/;
+
+const setArl = async (view: WebContentsView, rawArl: unknown) => {
+  const arl = typeof rawArl === 'string' ? rawArl.trim() : '';
+  if (!ARL_PATTERN.test(arl)) return;
   await view.webContents.session.cookies.set({
     url: DEEZER_URL,
     name: ARL_COOKIE_NAME,
@@ -44,7 +50,7 @@ export const handleLoginProtocol = async (
   if (!arg.startsWith(DEEZER_PROTOCOL_URI_LOGIN)) {
     dialog.showErrorBox(
       'Unexpected URI',
-      `Deezer Enhanced has handled the Deezer protocol, but the URI is not supported.\n\nProtocol: ${arg}\n\nOpen a GitHub issue to request support for it: https://github.com/duzda/deezer-enhanced/issues`
+      `Deezer Enhanced has handled the Deezer protocol, but the URI is not supported.\n\nProtocol: ${arg}\n\nOpen a GitHub issue to request support for it: https://github.com/arcthurr/deezer-enhanced/issues`
     );
     return;
   }
@@ -76,6 +82,11 @@ export const createLoginHandles = (view: WebContentsView) => {
   });
 
   ipcMain.on(LOGIN_OPEN_PAGE, (_, loginType: LoginType) => {
-    shell.openExternal(LOGIN_MAP[loginType]);
+    const url = Object.prototype.hasOwnProperty.call(LOGIN_MAP, loginType)
+      ? LOGIN_MAP[loginType]
+      : undefined;
+    if (typeof url === 'string' && url.startsWith('https://')) {
+      shell.openExternal(url);
+    }
   });
 };
