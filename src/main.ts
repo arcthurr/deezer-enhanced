@@ -53,23 +53,28 @@ if (!gotTheLock) {
   const createWindow = () => {
     session.defaultSession.setUserAgent(USER_AGENT);
 
-    session.defaultSession.webRequest.onHeadersReceived((details, callback) => {
-      // To allow communication with the API we need to fill Access-Control-Allow-Origin, this is probably safe as CSP will block the rest?
-      if (
-        details.responseHeaders === undefined ||
-        (details.responseHeaders['Access-Control-Allow-Origin'] === undefined &&
-          details.responseHeaders['access-control-allow-origin'] === undefined)
-      ) {
-        callback({
-          responseHeaders: {
-            ...details.responseHeaders,
-            'Access-Control-Allow-Origin': ['*'],
-          },
-        });
-      } else {
-        callback(details);
+    // Only the Deezer API needs the CORS header; other origins keep their own policy.
+    session.defaultSession.webRequest.onHeadersReceived(
+      { urls: ['https://api.deezer.com/*'] },
+      (details, callback) => {
+        if (
+          details.responseHeaders === undefined ||
+          (details.responseHeaders['Access-Control-Allow-Origin'] ===
+            undefined &&
+            details.responseHeaders['access-control-allow-origin'] ===
+              undefined)
+        ) {
+          callback({
+            responseHeaders: {
+              ...details.responseHeaders,
+              'Access-Control-Allow-Origin': ['*'],
+            },
+          });
+        } else {
+          callback(details);
+        }
       }
-    });
+    );
 
     const mainWindow = new BaseWindow({
       width: DEFAULT_WIDTH,
@@ -88,6 +93,9 @@ if (!gotTheLock) {
     const mainView = new WebContentsView({
       webPreferences: {
         preload: path.join(__dirname, 'preload.js'),
+        contextIsolation: true,
+        nodeIntegration: false,
+        sandbox: true,
       },
     });
 
@@ -109,6 +117,9 @@ if (!gotTheLock) {
     const view = new WebContentsView({
       webPreferences: {
         preload: path.join(__dirname, 'preload_view.js'),
+        contextIsolation: true,
+        nodeIntegration: false,
+        sandbox: true,
       },
     });
 
