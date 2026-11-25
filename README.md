@@ -39,10 +39,16 @@ npm start
 ### Install as a normal app (no root)
 
 ```
-npm run install:local
+./install.sh
 ```
 
-Packages the app and installs it to `~/.local/share/deezer-enhanced` with a **Deezer Enhanced** launcher entry and icon, and registers the `deezer://` link used for login. Run it again to update; `npm run uninstall:local` removes it. Your login and settings in `~/.config/deezer-enhanced` are kept.
+Builds the app and installs it to `~/.local/share/deezer-enhanced` with a **Deezer Enhanced** launcher entry and icon, and registers the `deezer://` link used for login. Run it again to update: a running or older install is stopped and replaced, and your login and settings in `~/.config/deezer-enhanced` are kept.
+
+```
+./uninstall.sh
+```
+
+Removes every trace: the app, launcher entry, icon, settings, login and cache (it asks first; `-y` skips that). Dependencies such as `node_modules` and Node are left alone.
 
 ### Other formats (written to `out/make/`)
 
