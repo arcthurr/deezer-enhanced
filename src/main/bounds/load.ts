@@ -64,5 +64,14 @@ export const loadBounds = async (
   view.webContents.once('did-navigate', () => setZoomFactor(view, zoom));
 
   if (getSettings().enableTray && getSettings().startInTray) return;
-  window.show();
+  // Show only once the UI has painted, to avoid a black/white flash on start.
+  const show = () => {
+    if (!window.isDestroyed()) window.show();
+  };
+  if (mainView.webContents.isLoading()) {
+    mainView.webContents.once('did-finish-load', () => setTimeout(show, 50));
+    setTimeout(show, 3000); // safety net
+  } else {
+    show();
+  }
 };

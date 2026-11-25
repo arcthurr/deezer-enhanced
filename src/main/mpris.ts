@@ -37,6 +37,16 @@ let songId = '';
 let songStart = 0;
 let songOffset = 0;
 
+// D-Bus can drop the connection (session bus restart, suspend...); writing to
+// the closed stream throws from an event emitter and would crash the app.
+const safe = (fn: () => void) => {
+  try {
+    fn();
+  } catch (e) {
+    console.warn('MPRIS update failed:', e);
+  }
+};
+
 const status = ['None', 'Playlist', 'Track'];
 
 const createMprisHandles = (player: Player, view: WebContentsView) => {
@@ -117,7 +127,7 @@ const createMprisListeners = (player: Player, view: WebContentsView) => {
     if (!data) return;
     if (data.SNG_ID) {
       const songData = data as Song;
-      updateMetadataSong(player, songData);
+      safe(() => updateMetadataSong(player, songData));
 
       if (isDiscordEnabled()) {
         setDiscordActivity(
@@ -148,7 +158,7 @@ const createMprisListeners = (player: Player, view: WebContentsView) => {
       }
     } else if (data.EPISODE_ID) {
       const episodeData = data as Episode;
-      updateMetadataEpisode(player, episodeData);
+      safe(() => updateMetadataEpisode(player, episodeData));
 
       if (isDiscordEnabled()) {
         setDiscordActivity(
@@ -187,18 +197,26 @@ const createMprisListeners = (player: Player, view: WebContentsView) => {
     songOffset = position * 1_000_000;
   });
   ipcMain.on(MPRIS_READ_STATUS, (_, playing) => {
-    player.playbackStatus = playing
-      ? Player.PLAYBACK_STATUS_PLAYING
-      : Player.PLAYBACK_STATUS_PAUSED;
+    safe(() => {
+      player.playbackStatus = playing
+        ? Player.PLAYBACK_STATUS_PLAYING
+        : Player.PLAYBACK_STATUS_PAUSED;
+    });
   });
   ipcMain.on(MPRIS_READ_VOLUME, (_, volume) => {
-    player.volume = volume;
+    safe(() => {
+      player.volume = volume;
+    });
   });
   ipcMain.on(MPRIS_READ_SHUFFLE, (_, shuffleStatus) => {
-    player.shuffle = shuffleStatus;
+    safe(() => {
+      player.shuffle = shuffleStatus;
+    });
   });
   ipcMain.on(MPRIS_READ_REPEAT, (_, loopStatus) => {
-    player.loopStatus = status[loopStatus];
+    safe(() => {
+      player.loopStatus = status[loopStatus];
+    });
   });
 };
 
@@ -226,6 +244,8 @@ export const initializePlayer = (
   player.isPlaying = () => {
     return player.playbackStatus === Player.PLAYBACK_STATUS_PLAYING;
   };
+
+  player.on('error', (e: unknown) => console.warn('MPRIS error:', e));
 
   createMprisListeners(player, mainView);
   createMprisHandles(player, view);

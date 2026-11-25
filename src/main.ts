@@ -60,6 +60,9 @@ const isAppUrl = (url: string) =>
   (!!MAIN_WINDOW_VITE_DEV_SERVER_URL &&
     url.startsWith(MAIN_WINDOW_VITE_DEV_SERVER_URL));
 
+// Dark background so the window never flashes white/black while loading.
+const BACKGROUND_COLOR = '#121216';
+
 const gotTheLock = app.requestSingleInstanceLock();
 
 if (process.defaultApp) {
@@ -80,6 +83,22 @@ if (!gotTheLock) {
     'disable-features',
     'AudioServiceOutOfProcess,MediaSessionService'
   );
+
+  // If the GPU process keeps crashing (black screen), relaunch once without GPU.
+  const GPU_FALLBACK_FLAG = '--disable-gpu-fallback';
+  if (process.argv.includes(GPU_FALLBACK_FLAG)) {
+    app.disableHardwareAcceleration();
+  }
+  app.on('child-process-gone', (_event, details) => {
+    if (
+      details.type === 'GPU' &&
+      details.reason !== 'clean-exit' &&
+      !process.argv.includes(GPU_FALLBACK_FLAG)
+    ) {
+      app.relaunch({ args: process.argv.slice(1).concat(GPU_FALLBACK_FLAG) });
+      app.exit(0);
+    }
+  });
 
   const createWindow = () => {
     session.defaultSession.setUserAgent(USER_AGENT);
@@ -117,7 +136,7 @@ if (!gotTheLock) {
       show: false,
       ...(transparent
         ? { transparent: true, backgroundColor: '#00000000' }
-        : {}),
+        : { backgroundColor: BACKGROUND_COLOR }),
       icon: path.join(
         app.isPackaged ? process.resourcesPath : '.',
         'assets',
@@ -184,10 +203,8 @@ if (!gotTheLock) {
         callback(['media', 'fullscreen', 'notifications'].includes(permission))
     );
 
-    if (transparent) {
-      view.setBackgroundColor('#00000000');
-      mainView.setBackgroundColor('#00000000');
-    }
+    view.setBackgroundColor(transparent ? '#00000000' : BACKGROUND_COLOR);
+    mainView.setBackgroundColor(transparent ? '#00000000' : BACKGROUND_COLOR);
 
     const onLayout = () => onDimensionsChange(mainWindow, mainView, view);
 
